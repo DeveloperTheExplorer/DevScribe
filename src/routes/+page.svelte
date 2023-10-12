@@ -1,18 +1,8 @@
 <script lang="ts">
-  import { DevScribeAIPlanner } from "$lib/devscribe-ai";
 
   let promptMsg = '';
 
   const promptAI = async () => {
-    const ai = new DevScribeAIPlanner();
-    const res = await ai.prompt([
-      {
-        role: 'user',
-        content: promptMsg
-      }
-    ]);
-
-    console.log('res :>> ', res);
   };
 </script>
 

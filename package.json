@@ -30,6 +30,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@auth/core": "^0.16.1",
+    "@auth/sveltekit": "^0.3.9",
     "openai": "^4.11.1"
   }
 }
