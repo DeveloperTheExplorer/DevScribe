@@ -6,11 +6,10 @@
   };
 </script>
 
-<h1>Welcome to SvelteKit</h1>
+<h1 class="text-5xl text-blue-500">Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 
 <input
-  style="display: block; width: 400px;"
   type="text"
   placeholder="Prompt AI..."
   bind:value={promptMsg}
