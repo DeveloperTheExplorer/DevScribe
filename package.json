@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "bun --bun vite dev",
+    "dev": "bun vite dev",
+    "dev:bun": "bun --bun vite dev --host",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -35,6 +36,7 @@
   "type": "module",
   "dependencies": {
     "@auth/core": "^0.17.0",
+    "@auth/mongodb-adapter": "^2.0.2",
     "@auth/sveltekit": "^0.3.10",
     "mongoose": "^7.6.3",
     "openai": "^4.11.1"

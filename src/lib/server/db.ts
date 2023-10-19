@@ -1,17 +1,19 @@
-import { env } from '$env/dynamic/private';
 import mongoose from 'mongoose';
 
-const MONGODB_URI = env.MONGODB_URI!;
+import { MONGO_DB_URI } from '$env/static/private';
 
 const connectDb = async () => {
-  await mongoose.connect(MONGODB_URI);
-  console.log('Connected to MongoDB');
+  const ret = await mongoose.connect(MONGO_DB_URI);
+  const connection = ret.connection;
+  const mongoDbClient = connection.getClient();
+
+  return mongoDbClient;
 }
 
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 
-connectDb();
+export const mongoDbClient = connectDb();
 
 export default db;
