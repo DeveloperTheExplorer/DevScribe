@@ -12,7 +12,7 @@ export const handle = SvelteKitAuth({
   providers: [
     GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET }),
     Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET }),
-    Apple({ clientId: AUTH_APPLE_ID, clientSecret: AUTH_APPLE_SECRET }),
+    // Apple({ clientId: AUTH_APPLE_ID, clientSecret: AUTH_APPLE_SECRET }), // Apple requires you to join the developer program
   ],
   secret: AUTH_SECRET
 });

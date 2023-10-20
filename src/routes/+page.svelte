@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
   import { signIn, signOut } from "@auth/sveltekit/client"
   import { page } from "$app/stores"
+  import Button from '$lib/components/Button.svelte'
 </script>
 
-<h1 class="text-5xl">SvelteKit Auth Example</h1>
-<p>
+<div class="flex flex-col items-center w-full py-12">
+  <h1 class="text-5xl">SvelteKit Auth Example</h1>
   {#if $page.data.session}
     {#if $page.data.session.user?.image}
       <div
@@ -16,10 +17,16 @@
       <small>Signed in as</small><br />
       <strong>{$page.data.session.user?.name ?? "User"}</strong>
     </div>
-    <button on:click={() => signOut()} class="button">Sign out</button>
+    <Button on:click={() => signOut()} danger>Sign out</Button>
   {:else}
-    <span class="notSignedInText">You are not signed in</span>
-    <button on:click={() => signIn("github")}>Sign In with GitHub</button>
-    <a href="/auth/signin" class="buttonPrimary" data-sveltekit-preload-data="off">Sign in</a>
+    <div class="text-lg">You are not signed in</div>
+    <div class="flex flex-row gap-2 mt-2">
+      <Button on:click={() => signIn("github")} tertiary id='abc'>
+        Sign In with GitHub
+      </Button>
+      <Button on:click={() => signIn("google")} primary>
+        Sign In with Google
+      </Button>
+    </div>
   {/if}
-</p>
+  </div>
