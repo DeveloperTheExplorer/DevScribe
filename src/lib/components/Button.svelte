@@ -14,13 +14,13 @@
 </script>
 
 <button
-  class="px-4 py-2 rounded-md text-white font-medium transition duration-300 ease-in-out focus:outline-none focus:shadow-outline"
+  on:click
+  {...$$restProps}
+  class="px-4 py-2 rounded-md text-white font-medium transition duration-300 ease-in-out focus:outline-none focus:shadow-outline {$$restProps.class}"
   class:bg-blue-500={primary} class:hover:bg-blue-600={primary}
   class:bg-blue-200={secondary} class:hover:bg-blue-300={secondary}
   class:bg-purple-500={tertiary} class:hover:bg-purple-600={tertiary}
   class:bg-red-500={danger} class:hover:bg-red-600={danger}
-  on:click
-  {...$$restProps}
 >
   <slot></slot>
 </button>

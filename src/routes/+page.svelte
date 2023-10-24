@@ -13,11 +13,12 @@
         class="w-24 h-24 bg-cover rounded-full"
       />
     {/if}
-    <div class="signedInText">
+    <div class="flex flex-col justify-between items-center">
       <small>Signed in as</small><br />
       <strong>{$page.data.session.user?.name ?? "User"}</strong>
+      <a href="/course/gen">Make a new course.</a>
     </div>
-    <Button on:click={() => signOut()} danger>Sign out</Button>
+    <Button class='mt-4' on:click={() => signOut()} danger>Sign out</Button>
   {:else}
     <div class="text-lg">You are not signed in</div>
     <div class="flex flex-row gap-2 mt-2">
