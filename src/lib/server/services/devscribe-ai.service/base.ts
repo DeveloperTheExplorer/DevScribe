@@ -47,7 +47,7 @@ export class DevScribeAI {
     const allMessages = [...this.contextMessages, ...messages];
     const response = await this.ai.chat.completions.create({
       ...this.options,
-      messages: allMessages,
+      messages: allMessages
     });
 
     return response;

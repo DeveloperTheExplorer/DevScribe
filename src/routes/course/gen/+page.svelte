@@ -1,20 +1,35 @@
 <script lang="ts">
+  import { useChat } from 'ai/svelte';
 	import Button from "$lib/components/Button.svelte";
-  import type { PageData } from './$types';
-  import { page } from '$app/stores';
-  import { superForm } from 'sveltekit-superforms/client';
 
-  export let data: PageData;
+  const { messages, input, handleSubmit, isLoading } = useChat({
+    api: '/api/course'
+  });
 
-  const { form, errors, constraints, enhance, delayed, message } = superForm(data.form);
-
-
+  $: console.log($messages);
 </script>
 
-<main>
+<main class="flex flex-col items-center py-20">
   <h1>Search Page</h1>
-  <form action="/api/course" method="post">
-    <input name="prompt" type="text" placeholder="Search...">
-    <Button primary>Search</Button>
+
+  <form 
+    on:submit={handleSubmit}
+    class="flex flex-row justify-center p-10" 
+  >
+    <input 
+      name="prompt" 
+      type="text" 
+      placeholder="Search..." 
+      class="shadow-md w-72 px-2"
+      bind:value={$input}
+    >
+    <Button primary type="submit">Search</Button>
+    {#if $isLoading}
+      <div>Loading...</div>
+    {/if}
   </form>
+  
+  {#each $messages as message}
+    <li>{message.role}: {message.content}</li>
+  {/each}
 </main>

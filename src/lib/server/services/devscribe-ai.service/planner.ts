@@ -1,3 +1,4 @@
+import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 import { DevScribeAI } from '.'
 import type { PromptMessage } from '.';
 
@@ -18,9 +19,10 @@ const context: PromptMessage[] = [
 
 export class DevScribeAIPlanner extends DevScribeAI {
 
-  constructor() {
+  constructor(options?: Partial<ChatCompletionCreateParamsBase>) {
     super(context, {
-      model: 'gpt-3.5-turbo'
+      model: 'gpt-3.5-turbo',
+      ...options
     });
   }
 }
