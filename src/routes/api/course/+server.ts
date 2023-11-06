@@ -3,7 +3,7 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 import type { Stream } from "openai/streaming";
 import type { ChatCompletionChunk } from "openai/resources";
 
-import { DevScribeAIPlanner, type PromptMessage } from "$lib/server/services/devscribe-ai.service";
+import { DevScribeAIProjectPlanner, type PromptMessage } from "$lib/server/services/devscribe-ai.service";
 import type { RequestHandler } from './$types';
 
 const postSchema = z.object({
@@ -13,7 +13,7 @@ const postSchema = z.object({
 
 export const POST = (async ({ request }) => {
   const { messages } = await request.json();
-  const devscribeAI = new DevScribeAIPlanner({ stream: true });
+  const devscribeAI = new DevScribeAIProjectPlanner({ stream: true });
   // const promptMessage: PromptMessage = {
   //   role: "user",
   //   content: prompt as string,

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { signIn, signOut } from "@auth/sveltekit/client"
   import { page } from "$app/stores"
-  import Button from '$lib/components/Button.svelte'
 </script>
 
 <div class="flex flex-col items-center w-full py-12">
@@ -18,16 +17,22 @@
       <strong>{$page.data.session.user?.name ?? "User"}</strong>
       <a href="/course/gen">Make a new course.</a>
     </div>
-    <Button class='mt-4' on:click={() => signOut()} danger>Sign out</Button>
+    <button class='btn variant-filled-warning mt-4' on:click={() => signOut()}>Sign out</button>
   {:else}
     <div class="text-lg">You are not signed in</div>
     <div class="flex flex-row gap-2 mt-2">
-      <Button on:click={() => signIn("github")} tertiary id='abc'>
+      <button 
+        class="btn variant-filled" 
+        on:click={() => signIn("github")}
+      >
         Sign In with GitHub
-      </Button>
-      <Button on:click={() => signIn("google")} primary>
+      </button>
+      <button 
+        class="btn variant-ringed"
+        on:click={() => signIn("google")}
+      >
         Sign In with Google
-      </Button>
+      </button>
     </div>
   {/if}
   </div>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { useChat } from 'ai/svelte';
-	import Button from "$lib/components/Button.svelte";
 
   const { messages, input, handleSubmit, isLoading } = useChat({
     api: '/api/course'
@@ -23,7 +22,7 @@
       class="shadow-md w-72 px-2"
       bind:value={$input}
     >
-    <Button primary type="submit">Search</Button>
+    <button type="submit" class="btn variant-filled">Search</button>
     {#if $isLoading}
       <div>Loading...</div>
     {/if}

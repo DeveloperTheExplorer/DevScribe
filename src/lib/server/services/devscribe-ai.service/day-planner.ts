@@ -17,7 +17,7 @@ const context: PromptMessage[] = [
   }
 ]
 
-export class DevScribeAIPlanner extends DevScribeAI {
+export class DevScribeAIDayPlanner extends DevScribeAI {
 
   constructor(options?: Partial<ChatCompletionCreateParamsBase>) {
     super(context, {
