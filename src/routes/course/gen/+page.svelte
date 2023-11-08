@@ -5,16 +5,16 @@
 	
 	import techMappingJson from '$lib/static/tech-mapping.json'
 
-	const { messages, input, handleSubmit, isLoading } = useChat({
-		api: '/api/course'
-	});
-
 	const techMapping: Record<string, string> = techMappingJson;
 	const allTechCount = Object.keys(techMapping).length;
 	const topTechnologies = ['JavaScript', 'NodeJS', 'ReactJS', 'Preact', 'TypeScript', 'Vue', 'Tailwind', 'Mongodb', 'Prisma', 'PostgreSQL', 'MySQL', 'Firebase', 'AWS', 'sass', 'Svelte', 'SvelteKit', 'NextJS', 'ExpressJS'];
 	let searchText = '';
 	let visibleTechs = topTechnologies;
 	let selectedTechs: string[] = ['NodeJS'];
+
+	const { messages, input, handleSubmit, isLoading } = useChat({
+		api: '/api/course'
+	});
 
 	const handleTechClick = (tech: string) => {
 		if (selectedTechs.includes(tech)) {
@@ -23,6 +23,7 @@
 		}
 		selectedTechs = [...selectedTechs, tech];
 	}
+
 	const handleSearch = () => {
 		console.log('searchText :>> ', searchText);
 		if (searchText === '') {
@@ -35,13 +36,21 @@
 		console.log('visibleTechs :>> ', visibleTechs);
 	}
 
+	const handlePrompt = (e: CustomEvent) => {
+		handleSubmit(e, { 
+			options: {
+				body: { selectedTechs }
+			}
+		})
+	}
+
 	$: console.log($messages);
 </script>
 
 <main class="flex flex-col items-center py-20">
 	<h1>Search Page</h1>
 
-	<Stepper on:complete={handleSubmit}>
+	<Stepper on:complete={handlePrompt}>
 		<Step>
 			<svelte:fragment slot="header">Create Your Own Personal Course!</svelte:fragment>
 			<p class="mb-6">
@@ -111,7 +120,7 @@
 					</button>
 				{/each}
 			</div>
-			<div class="flex flex-row justify-center pb-4">
+			<div class="flex flex-col justify-center pb-4">
 				<textarea
           class="textarea w-full p-2"
           rows="4"

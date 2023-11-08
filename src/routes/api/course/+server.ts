@@ -12,12 +12,11 @@ const postSchema = z.object({
 });
 
 export const POST = (async ({ request }) => {
-  const { messages } = await request.json();
+  let { messages, selectedTechs } = await request.json();
+  messages = messages as PromptMessage[];
+  messages[messages.length - 1].content += `;\n tech-stack: ${selectedTechs.join(", ")}`;
+
   const devscribeAI = new DevScribeAIProjectPlanner({ stream: true });
-  // const promptMessage: PromptMessage = {
-  //   role: "user",
-  //   content: prompt as string,
-  // }
   const response = await devscribeAI.prompt(messages as PromptMessage[]);
   const stream = OpenAIStream(response as Stream<ChatCompletionChunk>);
   
