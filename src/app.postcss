@@ -8,3 +8,48 @@ html, body { @apply h-full overflow-hidden; }
 input, button, input:focus, button:focus {
   outline: none;
 }
+
+@layer components {
+  .title, h1, h2, h3 {
+    letter-spacing: 0.5px;;
+    font-weight: 600;
+    line-height: 100%;
+  }
+  
+  .title {
+    @apply font-semibold text-6xl;
+    font-style: normal;
+  }
+  
+  h1 {
+    @apply h1;
+  }
+
+  h2 {
+    @apply h2;
+  }
+
+  h3 {
+    @apply h3;
+    font-weight: 500;
+  }
+
+  h4 {
+    @apply h4;
+    font-weight: 400;
+  }
+
+  h5 {
+    @apply h5;
+    font-weight: 400;
+  }
+
+  h5 {
+    @apply h6;
+    font-weight: 400;
+  }
+  
+  p, a {
+    font-weight: 400;
+  }
+}

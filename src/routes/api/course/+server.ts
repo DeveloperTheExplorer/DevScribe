@@ -17,8 +17,7 @@ export const POST = (async ({ request }) => {
   messages[messages.length - 1].content += `;\n tech-stack: ${selectedTechs.join(", ")}`;
 
   const devscribeAI = new DevScribeAIProjectPlanner({ stream: true });
-  const response = await devscribeAI.prompt(messages as PromptMessage[]);
-  const stream = OpenAIStream(response as Stream<ChatCompletionChunk>);
+  const { stream } = await devscribeAI.prompt(messages as PromptMessage[]);
   
   return new StreamingTextResponse(stream);
 }) satisfies RequestHandler

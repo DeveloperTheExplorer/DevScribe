@@ -45,8 +45,11 @@
     "@auth/core": "^0.17.0",
     "@auth/mongodb-adapter": "^2.0.2",
     "@auth/sveltekit": "^0.3.10",
+    "@sveltestack/svelte-query": "^1.6.0",
     "ai": "^2.2.19",
+    "axios": "^1.6.2",
     "mongoose": "^7.6.3",
-    "openai": "^4.11.1"
+    "openai": "^4.11.1",
+    "untruncate-json": "^0.0.1"
   }
 }

@@ -1,6 +1,8 @@
 import OpenAI from 'openai';
-import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
+import type { ChatCompletion, ChatCompletionChunk, ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 import { OPENAI_API_KEY } from '$env/static/private'
+import type { Stream } from 'openai/streaming';
+import { OpenAIStream, type OpenAIStreamCallbacks } from 'ai';
 
 export interface PromptMessage {
   role: 'system' | 'user' | 'assistant';
@@ -43,13 +45,18 @@ export class DevScribeAI {
    * @param prompt 
    * @returns 
    */
-  async prompt(messages: PromptMessage[]) {
+  async prompt(messages: PromptMessage[], callbacks?: OpenAIStreamCallbacks): Promise<{
+    response: Stream<ChatCompletionChunk> | ChatCompletion;
+    stream: ReadableStream<any>;
+  }> {
     const allMessages = [...this.contextMessages, ...messages];
     const response = await this.ai.chat.completions.create({
       ...this.options,
       messages: allMessages
     });
 
-    return response;
+    const stream = OpenAIStream(response as Stream<ChatCompletionChunk>, callbacks);
+
+    return { response, stream };
   }
 }
