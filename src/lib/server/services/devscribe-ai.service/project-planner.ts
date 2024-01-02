@@ -1,9 +1,10 @@
-import { OpenAIStream } from 'ai';
-import type { Stream } from 'openai/streaming';
-import type { ChatCompletionChunk, ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
+import { Types } from 'mongoose';
+import type { OpenAIStreamCallbacks } from 'ai';
+import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 
 import { DevScribeAI } from '.'
 import type { PromptMessage } from '.';
+import { CourseService } from '../course.service';
 
 const context: PromptMessage[] = [
   {
@@ -53,10 +54,13 @@ export class DevScribeAIProjectPlanner extends DevScribeAI {
     });
   }
 
-  async prompt(messages: PromptMessage[]) {
+  async prompt(messages: PromptMessage[], callbacks?: OpenAIStreamCallbacks, technologies?: string[], userId?: string | null) {
     return await super.prompt(messages, {
       onFinal(completion) {
         // save results to database
+        if (!technologies || !userId) throw new Error("Missing technologies or userId");
+
+        CourseService.newCourse(completion, messages[messages.length - 1].content, new Types.ObjectId(userId));
       }
     });
   }

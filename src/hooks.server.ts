@@ -32,6 +32,19 @@ export const handle = sequence(
       // Apple({ clientId: AUTH_APPLE_ID, clientSecret: AUTH_APPLE_SECRET }), // Apple requires you to join the developer program
     ],
     secret: AUTH_SECRET,
+    callbacks: {
+      async session({ session, user }) {
+        return {
+          ...session,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+          }
+        }
+      }
+    }
   }),
-  authorization
+  authorization,
 )

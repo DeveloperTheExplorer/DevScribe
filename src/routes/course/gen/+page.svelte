@@ -2,20 +2,39 @@
 	import { useChat } from 'ai/svelte';
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import Search from 'virtual:icons/tabler/search';
-	import untruncateJson from 'untruncate-json';
-	
-	import techMappingJson from '$lib/static/tech-mapping.json'
+
+	import techMappingJson from '$lib/static/tech-mapping.json';
 	import type { ProjectPlanObject } from '$lib/types';
+	import untruncateJson from '$lib/utils/json.util';
 
 	const techMapping: Record<string, string> = techMappingJson;
 	const allTechCount = Object.keys(techMapping).length;
-	const topTechnologies = ['JavaScript', 'NodeJS', 'ReactJS', 'Preact', 'TypeScript', 'Vue', 'Tailwind', 'Mongodb', 'Prisma', 'PostgreSQL', 'MySQL', 'Firebase', 'AWS', 'sass', 'Svelte', 'SvelteKit', 'NextJS', 'ExpressJS'];
+	const topTechnologies = [
+		'JavaScript',
+		'NodeJS',
+		'ReactJS',
+		'Preact',
+		'TypeScript',
+		'Vue',
+		'Tailwind',
+		'Mongodb',
+		'Prisma',
+		'PostgreSQL',
+		'MySQL',
+		'Firebase',
+		'AWS',
+		'sass',
+		'Svelte',
+		'SvelteKit',
+		'NextJS',
+		'ExpressJS'
+	];
 	let searchText = '';
 	let visibleTechs = topTechnologies;
 	let selectedTechs: string[] = ['NodeJS'];
 
 	const { messages, input, handleSubmit, isLoading } = useChat({
-		api: '/api/course',
+		api: '/api/course'
 	});
 
 	const handleTechClick = (tech: string) => {
@@ -24,41 +43,41 @@
 			return;
 		}
 		selectedTechs = [...selectedTechs, tech];
-	}
+	};
 
 	const handleSearch = () => {
 		if (searchText === '') {
 			visibleTechs = topTechnologies;
 			return;
-		} 
-		visibleTechs = Object.keys(techMapping).filter(
-			(tech) => tech.toLowerCase().includes(searchText.toLowerCase())
+		}
+		visibleTechs = Object.keys(techMapping).filter((tech) =>
+			tech.toLowerCase().includes(searchText.toLowerCase())
 		);
-	}
+	};
 
 	const handlePrompt = async (e: CustomEvent) => {
-		handleSubmit(e, { 
+		handleSubmit(e, {
 			options: {
 				body: { selectedTechs }
 			}
-		})
-	}
+		});
+	};
 
 	const parsePlan = (plan: string): Partial<ProjectPlanObject> => {
 		try {
 			const parsedPlan: Partial<ProjectPlanObject> = JSON.parse(plan);
-			
+
 			if (parsedPlan.intro?.techStack) {
-				parsedPlan.intro.techStack = parsedPlan.intro.techStack.map(
-					(tech: string) => tech.replace(/[^a-zA-Z]/g, '')
+				parsedPlan.intro.techStack = parsedPlan.intro.techStack.map((tech: string) =>
+					tech.replace(/[^a-zA-Z]/g, '')
 				);
 			}
-				
+
 			return parsedPlan;
 		} catch (error) {
 			return {};
 		}
-	}
+	};
 	$: lastMessage = $messages[$messages?.length - 1];
 	$: plan = parsePlan(untruncateJson(lastMessage?.content || ''));
 </script>
@@ -71,29 +90,33 @@
 			<Step>
 				<svelte:fragment slot="header">Create Your Own Personal Course!</svelte:fragment>
 				<p class="mb-6">
-					With the help of our AI, you can create your own personal course to create any project ideas
-					you have!
+					With the help of our AI, you can create your own personal course to create any project
+					ideas you have!
 				</p>
 			</Step>
 			<Step>
 				<svelte:fragment slot="header">Select Your Tech-Stack</svelte:fragment>
 				<p class="mb-6">
-					If you know what tech-stack you want to use, you can select it here. Otherwise, you can leave it blank.
+					If you know what tech-stack you want to use, you can select it here. Otherwise, you can
+					leave it blank.
 				</p>
 
 				<div class="input-group grid-cols-[auto_1fr_auto] w-1/2">
 					<div class="input-group-shim"><Search /></div>
-					<input 
-						class="p-2" 
-						type="search" 
-						placeholder={`Search ${allTechCount} technologies...`} 
+					<input
+						class="p-2"
+						type="search"
+						placeholder={`Search ${allTechCount} technologies...`}
 						bind:value={searchText}
 						on:input={handleSearch}
 					/>
 				</div>
 				<div class="flex flex-row items-center flex-wrap gap-2">
 					{#each selectedTechs as tech}
-						<button class="chip variant-soft hover:variant-filled" on:click={() => handleTechClick(tech)}>
+						<button
+							class="chip variant-soft hover:variant-filled"
+							on:click={() => handleTechClick(tech)}
+						>
 							<img
 								class="w-4 h-auto"
 								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
@@ -123,11 +146,17 @@
 			</Step>
 			<Step>
 				<svelte:fragment slot="header">Describe Your Project</svelte:fragment>
-				<p>Try to describe in detail what your project is about. Make sure to point out key features of your app.</p>
+				<p>
+					Try to describe in detail what your project is about. Make sure to point out key features
+					of your app.
+				</p>
 
 				<div class="flex flex-row items-center flex-wrap gap-2">
 					{#each selectedTechs as tech}
-						<button class="chip variant-soft hover:variant-filled" on:click={() => handleTechClick(tech)}>
+						<button
+							class="chip variant-soft hover:variant-filled"
+							on:click={() => handleTechClick(tech)}
+						>
 							<img
 								class="w-4 h-auto"
 								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
@@ -138,7 +167,10 @@
 					{/each}
 				</div>
 				<div class="flex flex-col justify-center pb-4">
-					<p>You are presented with an outfit based on your current closet items and based on the weather where the user resides</p>
+					<p>
+						You are presented with an outfit based on your current closet items and based on the
+						weather where the user resides
+					</p>
 					<textarea
 						class="textarea w-full p-2"
 						rows="4"
@@ -177,7 +209,7 @@
 							<h5>Chapter: {chapter?.title ?? ''}</h5>
 							<p>Duration: {chapter?.duration ?? ''} day(s)</p>
 						</div>
-		
+
 						<dl class="list-dl">
 							{#each chapter?.plan ?? [] as chapterPlan, index}
 								<div>

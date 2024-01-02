@@ -1,8 +1,8 @@
+import { OpenAIStream, type OpenAIStreamCallbacks } from 'ai';
 import OpenAI from 'openai';
 import type { ChatCompletion, ChatCompletionChunk, ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 import { OPENAI_API_KEY } from '$env/static/private'
 import type { Stream } from 'openai/streaming';
-import { OpenAIStream, type OpenAIStreamCallbacks } from 'ai';
 
 export interface PromptMessage {
   role: 'system' | 'user' | 'assistant';
