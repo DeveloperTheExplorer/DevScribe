@@ -5,6 +5,6 @@ export const load: PageServerLoad = async ({ params, parent }) => {
   const { session } = await parent();
   const { slug } = params;
 
-  if (!session?.user) throw redirect(303, "/")
+  if (!session?.user) redirect(303, "/");
   return {}
 }

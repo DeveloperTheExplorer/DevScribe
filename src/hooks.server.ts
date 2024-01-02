@@ -14,7 +14,7 @@ const authorization: Handle = async ({ event, resolve }) => {
   if (event.url.pathname.includes("/private")) {
     const session = await event.locals.getSession();
     if (!session) {
-      throw redirect(303, "/auth");
+      redirect(303, "/auth");
     }
   }
 
