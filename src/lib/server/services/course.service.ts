@@ -21,27 +21,34 @@ class CourseService {
   }
 
   async getCourse(courseId: string) {
-    const course = await CourseModel.findById(courseId);
-    return course;
+    return await CourseModel.findById(courseId);
   }
 
-  async newCourse(course: string, prompt: string, userId: Mongoose.Types.ObjectId) {
+  async getCourseByPrompt(prompt: string) {
+    const promptHash = hashValue(prompt);
+
+    return await CourseModel.findOne({ promptHash });
+  }
+
+  async newCourse(course: string, prompt: string, technologies: string[], modelUsed: string, userId: Mongoose.Types.ObjectId) {
     const rawCourseObj = JSON.parse(course) as RawCourse;
     const courseObj: ICourse = {
       student: userId,
       name: rawCourseObj.intro.name,
       duration: rawCourseObj.plan.reduce((acc, plan) => acc + plan.duration, 0),
       skills: [SkillCategory.FULL_STACK],
-      technologies: extractTechnologiesFromText(course),
+      technologies,
+      modelUsed,
       chapters: rawCourseObj.plan.map((plan) => ({
         name: `${plan.title} | ${rawCourseObj.intro.name}}`,
         duration: plan.duration,
+        modelUsed,
         lessons: plan.plan.map((lesson) => ({
           name: lesson,
           technologies: extractTechnologiesFromText(lesson),
           prompt: lesson,
         })),
-        technologies: extractTechnologiesFromText(plan.plan.join(' ')),
+        technologies: extractTechnologiesFromText(plan.plan.join('. ')),
       })),
       prompt,
       promptHash: hashValue(prompt),

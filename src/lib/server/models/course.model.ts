@@ -8,6 +8,7 @@ export interface ILesson {
   skills?: SkillCategory[];
   difficulty?: number;
   technologies: string[];
+  modelUsed?: string;
   content?: string;
   prompt: string;
 }
@@ -19,6 +20,7 @@ export interface IChapter {
   skills?: SkillCategory[];
   difficulty?: number;
   technologies: string[];
+  modelUsed: string;
   lessons: ILesson[];
 }
 
@@ -31,6 +33,7 @@ export interface ICourse {
   difficulty?: number;
   technologies: string[];
   chapters: IChapter[];
+  modelUsed: string;
   prompt: string;
   promptHash: string;
   contentHash: string;
@@ -46,6 +49,7 @@ const LessonSchema = new Schema({
   skills: [{ type: String }],
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],
+  modelUsed: { type: String },
   content: { type: String },
   prompt: { type: String, required: true }
 });
@@ -57,6 +61,7 @@ const ChapterSchema = new Schema({
   skills: [{ type: String }],
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],
+  modelUsed: { type: String, required: true },
   lessons: [LessonSchema],
 });
 
@@ -69,6 +74,7 @@ const CourseSchema = new Schema({
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],
   chapters: [ChapterSchema],
+  modelUsed: { type: String, required: true },
   prompt: { type: String, required: true },
   promptHash: { type: String, required: true },
   contentHash: { type: String, required: true, unique: true },

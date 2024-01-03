@@ -11,8 +11,8 @@
 	const allTechCount = Object.keys(techMapping).length;
 	const topTechnologies = [
 		'JavaScript',
-		'NodeJS',
-		'ReactJS',
+		'Node.JS',
+		'React',
 		'Preact',
 		'TypeScript',
 		'Vue',
@@ -26,12 +26,12 @@
 		'sass',
 		'Svelte',
 		'SvelteKit',
-		'NextJS',
-		'ExpressJS'
+		'Next.JS',
+		'Express.JS'
 	];
 	let searchText = '';
 	let visibleTechs = topTechnologies;
-	let selectedTechs: string[] = ['NodeJS'];
+	let selectedTechs: string[] = [];
 
 	const { messages, input, handleSubmit, isLoading } = useChat({
 		api: '/api/course'

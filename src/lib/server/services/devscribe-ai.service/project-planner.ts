@@ -45,11 +45,13 @@ const context: PromptMessage[] = [
   }
 ];
 
+const model: ChatCompletionCreateParamsBase['model'] = 'gpt-3.5-turbo';
+
 export class DevScribeAIProjectPlanner extends DevScribeAI {
 
   constructor(options?: Partial<ChatCompletionCreateParamsBase>) {
     super(context, {
-      model: 'gpt-3.5-turbo',
+      model,
       ...options
     });
   }
@@ -60,7 +62,7 @@ export class DevScribeAIProjectPlanner extends DevScribeAI {
         // save results to database
         if (!technologies || !userId) throw new Error("Missing technologies or userId");
 
-        CourseService.newCourse(completion, messages[messages.length - 1].content, new Types.ObjectId(userId));
+        CourseService.newCourse(completion, messages[messages.length - 1].content, technologies, model, new Types.ObjectId(userId));
       }
     });
   }
