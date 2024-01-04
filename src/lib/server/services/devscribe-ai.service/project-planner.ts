@@ -9,7 +9,7 @@ import { CourseService } from '../course.service';
 const context: PromptMessage[] = [
   {
     "role": "system",
-    "content": "Your goal is to mentor a beginner on their journey to learning to become a web software engineer. \n\nTheir goal is to create an application.\n\nBased on application the user wants to create and the desired minimum tech stack, provide a 28 day plan (chapter by chapter). The plan structure should contain periods for: \n1. Learning: learning enough about the technologies in the project so that they are familiar with concepts as they code.\n2. Setup: Setting up their development environment with the needed technologies and designing the needed architecture for the project.\n3. Implementation: Start developing and writing code.\n\nIf no tech-stack is provided, create one for the user.\n\nFirst provide a project name (max: 10 words), description (max: 30 words) and techStack (array of strings) JSON object in the following format:\n{ \"name\": {NAME}, \"description\": {DESCRIPTION}, \"techStack\": {TECHSTACK} },\n\nThen, for each chapter, provide the plan in a JSON object comma separated from other days. Each chapter must have a title, duration (number of days) and plan. Format:\n{ \"title\": {TITLE}, \"duration\": {DAYS_COUNT}, \"plan\":  {PLAN} }\n"
+    "content": "Your goal is to mentor a beginner on their journey to learning to become a web software engineer. It is very important that all your answers are in the specified JSON format, otherwise you will cause the server to crash. \n\nTheir goal is to create an application.\n\nBased on application the user wants to create and the desired minimum tech stack, provide a 28 day plan (chapter by chapter). The plan structure should contain periods for: \n1. Learning: learning enough about the technologies in the project so that they are familiar with concepts as they code.\n2. Setup: Setting up their development environment with the needed technologies and designing the needed architecture for the project.\n3. Implementation: Start developing and writing code.\n\nIf no tech-stack is provided, create one for the user.\n\nFirst provide a project name (max: 10 words), description (max: 30 words) and techStack (array of strings) JSON object in the following format:\n{ \"name\": {NAME}, \"description\": {DESCRIPTION}, \"techStack\": {TECHSTACK} },\n\nThen, for each chapter, provide the plan in a JSON object comma separated from other days. Each chapter must have a title, duration (number of days) and plan. Format:\n{ \"title\": {TITLE}, \"duration\": {DAYS_COUNT}, \"plan\":  {PLAN} }\n"
   },
   {
     "role": "user",
@@ -56,13 +56,14 @@ export class DevScribeAIProjectPlanner extends DevScribeAI {
     });
   }
 
-  async prompt(messages: PromptMessage[], callbacks?: OpenAIStreamCallbacks, technologies?: string[], userId?: string | null) {
+  async prompt(messages: PromptMessage[], callbacks?: OpenAIStreamCallbacks, userId?: string | null) {
     return await super.prompt(messages, {
-      onFinal(completion) {
+      onCompletion(completion) {
+        console.log('completion :>> ', completion);
         // save results to database
-        if (!technologies || !userId) throw new Error("Missing technologies or userId");
+        if (!userId) throw new Error("Missing technologies or userId");
 
-        CourseService.newCourse(completion, messages[messages.length - 1].content, technologies, model, new Types.ObjectId(userId));
+        CourseService.newCourse(completion, messages[messages.length - 1].content, model, new Types.ObjectId(userId));
       }
     });
   }

@@ -30,14 +30,18 @@ class CourseService {
     return await CourseModel.findOne({ promptHash });
   }
 
-  async newCourse(course: string, prompt: string, technologies: string[], modelUsed: string, userId: Mongoose.Types.ObjectId) {
+  async getCourseByContentHash(contentHash: string) {
+    return await CourseModel.findOne({ contentHash });
+  }
+
+  async newCourse(course: string, prompt: string, modelUsed: string, userId: Mongoose.Types.ObjectId) {
     const rawCourseObj = JSON.parse(course) as RawCourse;
     const courseObj: ICourse = {
       student: userId,
       name: rawCourseObj.intro.name,
       duration: rawCourseObj.plan.reduce((acc, plan) => acc + plan.duration, 0),
       skills: [SkillCategory.FULL_STACK],
-      technologies,
+      technologies: rawCourseObj.intro.techStack,
       modelUsed,
       chapters: rawCourseObj.plan.map((plan) => ({
         name: `${plan.title} | ${rawCourseObj.intro.name}}`,

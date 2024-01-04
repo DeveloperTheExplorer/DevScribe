@@ -2,10 +2,12 @@
 	import { useChat } from 'ai/svelte';
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import Search from 'virtual:icons/tabler/search';
+	import Sparkle from 'virtual:icons/ph/sparkle';
 
 	import techMappingJson from '$lib/static/tech-mapping.json';
 	import type { ProjectPlanObject } from '$lib/types';
 	import untruncateJson from '$lib/utils/json.util';
+	import { hashValue } from '$lib/utils/hash.util';
 
 	const techMapping: Record<string, string> = techMappingJson;
 	const allTechCount = Object.keys(techMapping).length;
@@ -80,10 +82,11 @@
 	};
 	$: lastMessage = $messages[$messages?.length - 1];
 	$: plan = parsePlan(untruncateJson(lastMessage?.content || ''));
+	$: contentHash = lastMessage?.content && !$isLoading && hashValue(lastMessage.content || '');
 </script>
 
-<main class="flex flex-col items-center pt-10 py-20">
-	<h1 class="text-center mb-8">Course Generator</h1>
+<main class="flex flex-col items-center py-20 pt-10">
+	<h1 class="mb-8 text-center">Course Generator</h1>
 
 	{#if $messages.length === 0}
 		<Stepper on:complete={handlePrompt}>
@@ -101,7 +104,7 @@
 					leave it blank.
 				</p>
 
-				<div class="input-group grid-cols-[auto_1fr_auto] w-1/2">
+				<div class="input-group w-1/2 grid-cols-[auto_1fr_auto]">
 					<div class="input-group-shim"><Search /></div>
 					<input
 						class="p-2"
@@ -111,14 +114,14 @@
 						on:input={handleSearch}
 					/>
 				</div>
-				<div class="flex flex-row items-center flex-wrap gap-2">
+				<div class="flex flex-row flex-wrap items-center gap-2">
 					{#each selectedTechs as tech}
 						<button
-							class="chip variant-soft hover:variant-filled"
+							class="variant-soft chip hover:variant-filled"
 							on:click={() => handleTechClick(tech)}
 						>
 							<img
-								class="w-4 h-auto"
+								class="h-auto w-4"
 								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
 								alt={techMapping[tech]}
 							/>
@@ -129,17 +132,17 @@
 				<div class="card grid grid-cols-6 gap-4 p-4">
 					{#each visibleTechs as tech}
 						<button
-							class="flex flex-col items-center justify-center rounded-md p-2 gap-2"
+							class="flex flex-col items-center justify-center gap-2 rounded-md p-2"
 							class:variant-filled-tertiary={selectedTechs.includes(tech)}
 							class:shadow-sm={selectedTechs.includes(tech)}
 							on:click={() => handleTechClick(tech)}
 						>
 							<img
-								class="w-8 h-auto"
+								class="h-auto w-8"
 								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
 								alt={techMapping[tech]}
 							/>
-							<p class="w-24 text-ellipsis overflow-hidden">{tech}</p>
+							<p class="w-24 overflow-hidden text-ellipsis">{tech}</p>
 						</button>
 					{/each}
 				</div>
@@ -151,14 +154,14 @@
 					of your app.
 				</p>
 
-				<div class="flex flex-row items-center flex-wrap gap-2">
+				<div class="flex flex-row flex-wrap items-center gap-2">
 					{#each selectedTechs as tech}
 						<button
-							class="chip variant-soft hover:variant-filled"
+							class="variant-soft chip hover:variant-filled"
 							on:click={() => handleTechClick(tech)}
 						>
 							<img
-								class="w-4 h-auto"
+								class="h-auto w-4"
 								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
 								alt={techMapping[tech]}
 							/>
@@ -186,14 +189,14 @@
 			</Step>
 		</Stepper>
 	{:else}
-		<div class="flex flex-col w-full max-w-[1200px]">
-			<h3 class="flex grow w-full">Project: {plan?.intro?.name ?? ''}</h3>
-			<p class="flex grow w-full">Description: {plan?.intro?.description ?? ''}</p>
-			<div class="flex flex-row items-center flex-wrap w-full gap-2 mt-4">
+		<div class="flex w-full max-w-[1200px] flex-col">
+			<h3 class="flex w-full grow">Project: {plan?.intro?.name ?? ''}</h3>
+			<p class="flex w-full grow">Description: {plan?.intro?.description ?? ''}</p>
+			<div class="mt-4 flex w-full flex-row flex-wrap items-center gap-2">
 				{#each plan?.intro?.techStack ?? [] as tech}
-					<div class="chip variant-filled">
+					<div class="variant-filled chip">
 						<img
-							class="w-4 h-auto"
+							class="h-auto w-4"
 							src={`/icons/file_type_${techMapping[tech.toLowerCase()] || 'config'}.svg`}
 							alt={techMapping[tech]}
 						/>
@@ -202,10 +205,10 @@
 				{/each}
 			</div>
 
-			<div class="flex flex-col items-center w-full gap-4 mt-4">
+			<div class="mt-4 flex w-full flex-col items-center gap-4">
 				{#each plan?.plan ?? [] as chapter}
-					<div class="card flex flex-col w-2/3 gap-2 p-4">
-						<div class="flex flex-row justify-between items-center">
+					<div class="card flex w-2/3 flex-col gap-2 p-4">
+						<div class="flex flex-row items-center justify-between">
 							<h5>Chapter: {chapter?.title ?? ''}</h5>
 							<p>Duration: {chapter?.duration ?? ''} day(s)</p>
 						</div>
@@ -222,6 +225,15 @@
 						</dl>
 					</div>
 				{/each}
+				{#if contentHash}
+					<a
+						href={`/course/${contentHash}`}
+						class="variant-filled btn flex flex-row items-center gap-2"
+						data-sveltekit-preload-data="hover"
+					>
+						<Sparkle /> Start Course!
+					</a>
+				{/if}
 			</div>
 		</div>
 	{/if}

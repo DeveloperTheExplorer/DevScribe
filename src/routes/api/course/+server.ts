@@ -1,6 +1,6 @@
 import { json, text } from '@sveltejs/kit';
 import { z } from 'zod';
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { OpenAIStream, StreamingTextResponse, streamToResponse } from "ai";
 
 import { DevScribeAIProjectPlanner, type PromptMessage } from "$lib/server/services/devscribe-ai.service";
 import type { RequestHandler } from './$types';
@@ -29,8 +29,7 @@ export const POST = (async ({ request, locals }) => {
   }
 
   const devscribeAI = new DevScribeAIProjectPlanner({ stream: true });
-  const { stream } = await devscribeAI.prompt(messages as PromptMessage[], undefined, selectedTechs, session.user.id);
+  const { stream } = await devscribeAI.prompt(messages as PromptMessage[], undefined, session.user.id);
 
   return new StreamingTextResponse(stream);
 }) satisfies RequestHandler
-// An app where you can see the weather live in your city.

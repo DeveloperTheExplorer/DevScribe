@@ -8,5 +8,14 @@ export default defineConfig({
 		Icons({
 			compiler: 'svelte',
 		})
-	]
+	],
+	resolve: {
+		alias: {
+			process: "process/browser",
+			stream: "stream-browserify",
+			crypto: "crypto-browserify",
+			zlib: "browserify-zlib",
+			util: 'util'
+		}
+	}
 });
