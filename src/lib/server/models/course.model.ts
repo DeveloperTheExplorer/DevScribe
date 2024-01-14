@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import type { SkillCategory } from "./user.model";
+import { slugify } from "$lib/utils/string.util";
 
 export interface ILesson {
   name: string;
@@ -28,6 +29,7 @@ export interface ICourse {
   student: Types.ObjectId;
   name: string;
   description?: string;
+  slug?: string;
   duration: number;
   skills: SkillCategory[];
   difficulty?: number;
@@ -68,6 +70,7 @@ const ChapterSchema = new Schema({
 const CourseSchema = new Schema({
   student: { type: Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
   description: { type: String },
   duration: { type: Number, required: true },
   skills: [{ type: String }],
@@ -79,6 +82,18 @@ const CourseSchema = new Schema({
   promptHash: { type: String, required: true },
   contentHash: { type: String, required: true, unique: true },
   content: { type: String, required: true }
+}, {
+  toJSON: {
+    transform: (doc, ret) => {
+      delete ret._id;
+      delete ret.__v;
+    }
+  }
+});
+
+CourseSchema.pre<ICourseModel>('save', function (next) {
+  this.slug = slugify(this.name);
+  next();
 });
 
 export const CourseModel = mongoose.model<ICourseModel>('Course', CourseSchema);

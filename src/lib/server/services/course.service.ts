@@ -3,9 +3,11 @@ import Mongoose from 'mongoose';
 import { CourseModel, type ICourse } from '../models/course.model';
 import type { RawCourse } from '../types';
 
-import { hashValue } from '$lib/utils/hash.util';
-import { extractTechnologiesFromText } from '$lib/utils/technologies.util';
 import { SkillCategory } from '../models/user.model';
+
+import { HashType, determineHashType, hashValue } from '$lib/utils/hash.util';
+import { slugify } from '$lib/utils/string.util';
+import { extractTechnologiesFromText } from '$lib/utils/technologies.util';
 
 class CourseService {
 
@@ -21,13 +23,30 @@ class CourseService {
   }
 
   async getCourse(courseId: string) {
-    return await CourseModel.findById(courseId);
+    return await CourseModel.findById(courseId).lean();
+  }
+
+  async getCourseBySlug(slug: string) {
+    return await CourseModel.findOne({ slug }).lean();
   }
 
   async getCourseByPrompt(prompt: string) {
     const promptHash = hashValue(prompt);
 
-    return await CourseModel.findOne({ promptHash });
+    return await CourseModel.findOne({ promptHash }).lean();
+  }
+
+  async getCourseByUnknownIdentifier(identifier: string) {
+    const slugType = determineHashType(identifier);
+
+    if (slugType === HashType.HASH) {
+      return this.getCourseByContentHash(identifier);
+    }
+    if (slugType === HashType.OBJECT_ID) {
+      return this.getCourse(identifier);
+    }
+
+    return this.getCourseBySlug(identifier)
   }
 
   async getCourseByContentHash(contentHash: string) {
@@ -39,6 +58,7 @@ class CourseService {
     const courseObj: ICourse = {
       student: userId,
       name: rawCourseObj.intro.name,
+      description: rawCourseObj.intro.description,
       duration: rawCourseObj.plan.reduce((acc, plan) => acc + plan.duration, 0),
       skills: [SkillCategory.FULL_STACK],
       technologies: rawCourseObj.intro.techStack,

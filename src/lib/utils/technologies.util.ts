@@ -1,6 +1,7 @@
 import techMappingJson from '$lib/static/tech-mapping.json';
 
-const techMapping: Record<string, string> = techMappingJson;
+export const techMapping: Record<string, string> = techMappingJson;
+export const allTechCount = Object.keys(techMapping).length;
 
 export const extractTechnologiesFromText = (text: string) => {
   text = text.toLowerCase();
@@ -10,3 +11,16 @@ export const extractTechnologiesFromText = (text: string) => {
     return text.match(regexExp);
   });
 }
+
+export const searchTechnologies = (search: string) => {
+
+  const results = Object.keys(techMapping).filter(tech => {
+    return tech.toLowerCase().includes(search.toLowerCase());
+  }).map(tech => [techMapping[tech], tech]);
+  const filteredResultsObj = Object.fromEntries(results);
+
+  return Object.values(filteredResultsObj) as string[];
+}
+
+export const getTechnologyIconUrl = (technology: string) =>
+  `/icons/file_type_${techMapping[technology.toLowerCase()] || 'config'}.svg`;

@@ -4,13 +4,15 @@
 	import Search from 'virtual:icons/tabler/search';
 	import Sparkle from 'virtual:icons/ph/sparkle';
 
-	import techMappingJson from '$lib/static/tech-mapping.json';
 	import type { ProjectPlanObject } from '$lib/types';
 	import untruncateJson from '$lib/utils/json.util';
 	import { hashValue } from '$lib/utils/hash.util';
+	import {
+		allTechCount,
+		getTechnologyIconUrl,
+		searchTechnologies
+	} from '$lib/utils/technologies.util';
 
-	const techMapping: Record<string, string> = techMappingJson;
-	const allTechCount = Object.keys(techMapping).length;
 	const topTechnologies = [
 		'JavaScript',
 		'Node.JS',
@@ -52,9 +54,7 @@
 			visibleTechs = topTechnologies;
 			return;
 		}
-		visibleTechs = Object.keys(techMapping).filter((tech) =>
-			tech.toLowerCase().includes(searchText.toLowerCase())
-		);
+		visibleTechs = searchTechnologies(searchText);
 	};
 
 	const handlePrompt = async (e: CustomEvent) => {
@@ -120,11 +120,7 @@
 							class="variant-soft chip hover:variant-filled"
 							on:click={() => handleTechClick(tech)}
 						>
-							<img
-								class="h-auto w-4"
-								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
-								alt={techMapping[tech]}
-							/>
+							<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
 							<span>{tech}</span>
 						</button>
 					{/each}
@@ -137,11 +133,7 @@
 							class:shadow-sm={selectedTechs.includes(tech)}
 							on:click={() => handleTechClick(tech)}
 						>
-							<img
-								class="h-auto w-8"
-								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
-								alt={techMapping[tech]}
-							/>
+							<img class="h-auto w-8" src={getTechnologyIconUrl(tech)} alt={tech} />
 							<p class="w-24 overflow-hidden text-ellipsis">{tech}</p>
 						</button>
 					{/each}
@@ -160,11 +152,7 @@
 							class="variant-soft chip hover:variant-filled"
 							on:click={() => handleTechClick(tech)}
 						>
-							<img
-								class="h-auto w-4"
-								src={`/icons/file_type_${techMapping[tech.toLowerCase()]}.svg`}
-								alt={techMapping[tech]}
-							/>
+							<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
 							<span>{tech}</span>
 						</button>
 					{/each}
@@ -195,11 +183,7 @@
 			<div class="mt-4 flex w-full flex-row flex-wrap items-center gap-2">
 				{#each plan?.intro?.techStack ?? [] as tech}
 					<div class="variant-filled chip">
-						<img
-							class="h-auto w-4"
-							src={`/icons/file_type_${techMapping[tech.toLowerCase()] || 'config'}.svg`}
-							alt={techMapping[tech]}
-						/>
+						<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
 						<span>{tech}</span>
 					</div>
 				{/each}
