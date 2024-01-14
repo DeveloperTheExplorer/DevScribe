@@ -23,17 +23,20 @@ class CourseService {
   }
 
   async getCourse(courseId: string) {
-    return await CourseModel.findById(courseId).lean();
+    return await CourseModel.findById(courseId);
   }
 
   async getCourseBySlug(slug: string) {
-    return await CourseModel.findOne({ slug }).lean();
+    return await CourseModel.findOne({ slug });
   }
 
   async getCourseByPrompt(prompt: string) {
-    const promptHash = hashValue(prompt);
 
-    return await CourseModel.findOne({ promptHash }).lean();
+    return await CourseModel.findOne({ promptHash: hashValue(prompt) });
+  }
+
+  async getCourseByContentHash(contentHash: string) {
+    return await CourseModel.findOne({ contentHash });
   }
 
   async getCourseByUnknownIdentifier(identifier: string) {
@@ -46,11 +49,7 @@ class CourseService {
       return this.getCourse(identifier);
     }
 
-    return this.getCourseBySlug(identifier)
-  }
-
-  async getCourseByContentHash(contentHash: string) {
-    return await CourseModel.findOne({ contentHash });
+    return this.getCourseBySlug(identifier);
   }
 
   async newCourse(course: string, prompt: string, modelUsed: string, userId: Mongoose.Types.ObjectId) {

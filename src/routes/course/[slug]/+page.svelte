@@ -10,8 +10,9 @@
 
 <main class="flex flex-col items-center py-20 pt-10">
 	<div class="flex w-full max-w-[1200px] flex-col">
-		<h3 class="flex w-full grow">Project: {course.name}</h3>
-		<p class="flex w-full grow">Description: {course.description}</p>
+		<h3 class="">Project: {course.name}</h3>
+		<p class="">Description: {course.description}</p>
+		<p class="text-surface-300">Slug: {course.slug}</p>
 		<div class="mt-4 flex w-full flex-row flex-wrap items-center gap-2">
 			{#each course.technologies as tech}
 				<div class="variant-filled chip">
