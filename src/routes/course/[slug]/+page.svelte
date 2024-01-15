@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 
-	import { getTechnologyIconUrl } from '$lib/utils/technologies.util';
+	import CourseSummary from '$lib/components/CourseSummary.svelte';
 
 	export let data: PageData;
 
@@ -10,16 +10,8 @@
 
 <main class="flex flex-col items-center py-20 pt-10">
 	<div class="flex w-full max-w-[1200px] flex-col">
-		<h3 class="">Project: {course.name}</h3>
-		<p class="">Description: {course.description}</p>
-		<p class="text-surface-300">Slug: {course.slug}</p>
-		<div class="mt-4 flex w-full flex-row flex-wrap items-center gap-2">
-			{#each course.technologies as tech}
-				<div class="variant-filled chip">
-					<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
-					<span>{tech}</span>
-				</div>
-			{/each}
+		<div class="flex flex-row justify-between">
+			<CourseSummary {course} />
 		</div>
 
 		<div class="mt-4 flex w-full flex-col items-center gap-4">

@@ -3,6 +3,7 @@
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import Search from 'virtual:icons/tabler/search';
 	import Sparkle from 'virtual:icons/ph/sparkle';
+	import TechList from '$lib/components/TechList.svelte';
 
 	import type { ProjectPlanObject } from '$lib/types';
 	import untruncateJson from '$lib/utils/json.util';
@@ -12,6 +13,7 @@
 		getTechnologyIconUrl,
 		searchTechnologies
 	} from '$lib/utils/technologies.util';
+	import TechChip from '$lib/components/TechChip.svelte';
 
 	const topTechnologies = [
 		'JavaScript',
@@ -116,13 +118,11 @@
 				</div>
 				<div class="flex flex-row flex-wrap items-center gap-2">
 					{#each selectedTechs as tech}
-						<button
+						<TechChip
+							{tech}
 							class="variant-soft chip hover:variant-filled"
 							on:click={() => handleTechClick(tech)}
-						>
-							<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
-							<span>{tech}</span>
-						</button>
+						/>
 					{/each}
 				</div>
 				<div class="card grid grid-cols-6 gap-4 p-4">
@@ -148,13 +148,11 @@
 
 				<div class="flex flex-row flex-wrap items-center gap-2">
 					{#each selectedTechs as tech}
-						<button
+						<TechChip
+							{tech}
 							class="variant-soft chip hover:variant-filled"
 							on:click={() => handleTechClick(tech)}
-						>
-							<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
-							<span>{tech}</span>
-						</button>
+						/>
 					{/each}
 				</div>
 				<div class="flex flex-col justify-center pb-4">
@@ -180,14 +178,7 @@
 		<div class="flex w-full max-w-[1200px] flex-col">
 			<h3 class="flex w-full grow">Project: {plan?.intro?.name ?? ''}</h3>
 			<p class="flex w-full grow">Description: {plan?.intro?.description ?? ''}</p>
-			<div class="mt-4 flex w-full flex-row flex-wrap items-center gap-2">
-				{#each plan?.intro?.techStack ?? [] as tech}
-					<div class="variant-filled chip">
-						<img class="h-auto w-4" src={getTechnologyIconUrl(tech)} alt={tech} />
-						<span>{tech}</span>
-					</div>
-				{/each}
-			</div>
+			<TechList class="mt-2" techs={plan.intro?.techStack} />
 
 			<div class="mt-4 flex w-full flex-col items-center gap-4">
 				{#each plan?.plan ?? [] as chapter}

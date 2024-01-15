@@ -1,13 +1,14 @@
 import Mongoose from 'mongoose';
 
-import { CourseModel, type ICourse } from '../models/course.model';
+import { CourseModel } from '../models/course.model';
 import type { RawCourse } from '../types';
 
-import { SkillCategory } from '../models/user.model';
 
 import { HashType, determineHashType, hashValue } from '$lib/utils/hash.util';
 import { slugify } from '$lib/utils/string.util';
 import { extractTechnologiesFromText } from '$lib/utils/technologies.util';
+import type { ICourse } from '$lib/types/course.type';
+import { SkillCategory } from '$lib/types/skill-category.types';
 
 class CourseService {
 
@@ -31,12 +32,15 @@ class CourseService {
   }
 
   async getCourseByPrompt(prompt: string) {
-
     return await CourseModel.findOne({ promptHash: hashValue(prompt) });
   }
 
   async getCourseByContentHash(contentHash: string) {
     return await CourseModel.findOne({ contentHash });
+  }
+
+  async getCoursesByUserId(student: string) {
+    return await CourseModel.find({ student }).sort({ progress: -1 });
   }
 
   async getCourseByUnknownIdentifier(identifier: string) {

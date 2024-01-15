@@ -13,7 +13,7 @@
 	<svelte:fragment slot="trail">
 		<div class="flex flex-row gap-8 px-4">
 			<a class="flex items-center gap-2" href="/course/gen"><Sparkle /> New Course</a>
-			<a class="flex items-center gap-2" href="/course/search"><Files /> Explore Courses</a>
+			<a class="flex items-center gap-2" href="/courses"><Files /> Explore Courses</a>
 			<button class="flex items-center gap-2" on:click={() => signOut()}><Power /> Log Out</button>
 		</div>
 	</svelte:fragment>

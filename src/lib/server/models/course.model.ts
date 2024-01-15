@@ -1,46 +1,10 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
-import type { SkillCategory } from "./user.model";
+
 import { slugify } from "$lib/utils/string.util";
 
-export interface ILesson {
-  name: string;
-  description?: string;
-  duration?: number;
-  skills?: SkillCategory[];
-  difficulty?: number;
-  technologies: string[];
-  modelUsed?: string;
-  content?: string;
-  prompt: string;
-}
+import { enumValues } from "$lib/utils/type.utils";
+import { LessonStatus, type ICourse } from "$lib/types/course.type";
 
-export interface IChapter {
-  name: string;
-  description?: string;
-  duration: number;
-  skills?: SkillCategory[];
-  difficulty?: number;
-  technologies: string[];
-  modelUsed: string;
-  lessons: ILesson[];
-}
-
-export interface ICourse {
-  student: Types.ObjectId;
-  name: string;
-  description?: string;
-  slug?: string;
-  duration: number;
-  skills: SkillCategory[];
-  difficulty?: number;
-  technologies: string[];
-  chapters: IChapter[];
-  modelUsed: string;
-  prompt: string;
-  promptHash: string;
-  contentHash: string;
-  content: string;
-}
 
 interface ICourseModel extends ICourse, Document { }
 
@@ -51,6 +15,7 @@ const LessonSchema = new Schema({
   skills: [{ type: String }],
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],
+  status: { type: String, enum: enumValues(LessonStatus), default: LessonStatus.NOT_STARTED, required: true },
   modelUsed: { type: String },
   content: { type: String },
   prompt: { type: String, required: true }
@@ -73,6 +38,7 @@ const CourseSchema = new Schema({
   slug: { type: String, required: true, unique: true },
   description: { type: String },
   duration: { type: Number, required: true },
+  process: { type: Number, default: 0 },
   skills: [{ type: String }],
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],
@@ -92,6 +58,18 @@ const CourseSchema = new Schema({
 });
 
 CourseSchema.pre<ICourseModel>('save', function (next) {
+
+  let totalLessons = 0,
+    completedLessons = 0;
+  for (const chapter of this.chapters) {
+    for (const lesson of chapter.lessons) {
+      totalLessons++;
+      if (lesson.status === LessonStatus.COMPLETED) {
+        completedLessons++;
+      }
+    }
+  }
+  this.progress = Math.round((completedLessons / totalLessons) * 100);
   this.slug = slugify(this.name);
   next();
 });

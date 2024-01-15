@@ -1,4 +1,3 @@
-
 export interface ProjectPlanObject {
   intro: {
     name: string;
