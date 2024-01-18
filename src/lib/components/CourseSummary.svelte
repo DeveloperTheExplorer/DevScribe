@@ -1,13 +1,12 @@
 <script lang="ts">
 	import type { ICourse } from '$lib/types/course.type';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
-
 	import TechList from '$lib/components/TechList.svelte';
 
 	export let course: ICourse;
 </script>
 
-<div class="flex flex-row items-stretch justify-between">
+<div class="flex flex-row items-stretch justify-between {$$restProps.class}">
 	<div class="flex h-full flex-col justify-between">
 		<h3>{course.name}</h3>
 		{#if course.description}

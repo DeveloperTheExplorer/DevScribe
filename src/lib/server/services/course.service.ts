@@ -67,7 +67,7 @@ class CourseService {
       technologies: rawCourseObj.intro.techStack,
       modelUsed,
       chapters: rawCourseObj.plan.map((plan) => ({
-        name: `${plan.title} | ${rawCourseObj.intro.name}}`,
+        name: `${plan.title} | ${rawCourseObj.intro.name}`,
         duration: plan.duration,
         modelUsed,
         lessons: plan.plan.map((lesson) => ({

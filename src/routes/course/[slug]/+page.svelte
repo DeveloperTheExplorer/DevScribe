@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 
 	import CourseSummary from '$lib/components/CourseSummary.svelte';
+	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let data: PageData;
 
@@ -9,10 +10,9 @@
 </script>
 
 <main class="flex flex-col items-center py-20 pt-10">
+	<Markdown class="mb-10 p-12" />
 	<div class="flex w-full max-w-[1200px] flex-col">
-		<div class="flex flex-row justify-between">
-			<CourseSummary {course} />
-		</div>
+		<CourseSummary class="px-3" {course} />
 
 		<div class="mt-4 flex w-full flex-col items-center gap-4">
 			{#each course.chapters as chapter}

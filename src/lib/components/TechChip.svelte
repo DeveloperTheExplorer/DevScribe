@@ -2,7 +2,7 @@
 	import { getTechnologyIconUrl } from '$lib/utils/technologies.util';
 
 	export let tech: string;
-	export let iconWidth: string = 'h-4';
+	export let iconWidth: string = 'w-4';
 </script>
 
 <button {...$$restProps} class="variant-filled chip {$$restProps.class}" on:click>
