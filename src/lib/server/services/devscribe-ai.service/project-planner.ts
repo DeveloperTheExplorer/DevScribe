@@ -45,7 +45,7 @@ const context: PromptMessage[] = [
   }
 ];
 
-const model: ChatCompletionCreateParamsBase['model'] = 'gpt-3.5-turbo';
+const model: ChatCompletionCreateParamsBase['model'] = 'gpt-4';
 
 export class DevScribeAIProjectPlanner extends DevScribeAI {
 

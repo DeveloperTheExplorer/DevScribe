@@ -7,7 +7,8 @@ export const extractTechnologiesFromText = (text: string) => {
   text = text.toLowerCase();
 
   return Object.keys(techMapping).filter(tech => {
-    const regexExp = new RegExp(`\\b${tech}\\b`, "i");
+    const escapedSearchString = tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regexExp = new RegExp(`\\b${escapedSearchString}\\b`, "i");
     return text.match(regexExp);
   });
 }

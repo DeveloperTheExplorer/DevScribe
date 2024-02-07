@@ -35,7 +35,7 @@ const ChapterSchema = new Schema({
 const CourseSchema = new Schema({
   student: { type: Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },
-  slug: { type: String, required: true, unique: true },
+  slug: { type: String, unique: true },
   description: { type: String },
   duration: { type: Number, required: true },
   process: { type: Number, default: 0 },

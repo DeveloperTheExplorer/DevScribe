@@ -178,7 +178,7 @@
 		<div class="flex w-full max-w-[1200px] flex-col">
 			<h3 class="flex w-full grow">Project: {plan?.intro?.name ?? ''}</h3>
 			<p class="flex w-full grow">Description: {plan?.intro?.description ?? ''}</p>
-			<TechList class="mt-2" techs={plan.intro?.techStack} />
+			<TechList class="mt-2" techs={plan?.intro?.techStack ?? []} />
 
 			<div class="mt-4 flex w-full flex-col items-center gap-4">
 				{#each plan?.plan ?? [] as chapter}
