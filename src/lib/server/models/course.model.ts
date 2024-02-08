@@ -38,7 +38,7 @@ const CourseSchema = new Schema({
   slug: { type: String, unique: true },
   description: { type: String },
   duration: { type: Number, required: true },
-  process: { type: Number, default: 0 },
+  progress: { type: Number, default: 0 },
   skills: [{ type: String }],
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],

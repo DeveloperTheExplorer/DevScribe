@@ -1,12 +1,12 @@
 import { error } from "@sveltejs/kit";
 
-import type { PageServerLoad } from "./$types"
+import type { LayoutServerLoad } from "./$types"
 
 import { CourseService } from "$lib/server/services/course.service";
 import type { ICourse } from "$lib/types/course.type";
 import { toObject } from "$lib/utils/mongo.util";
 
-export const load: PageServerLoad = async ({ params, parent }) => {
+export const load: LayoutServerLoad = async ({ params, parent }) => {
   const { session } = await parent();
   const { slug } = params;
 

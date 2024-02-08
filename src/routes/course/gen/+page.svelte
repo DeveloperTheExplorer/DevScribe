@@ -191,7 +191,7 @@
 						<dl class="list-dl">
 							{#each chapter?.plan ?? [] as chapterPlan, index}
 								<div>
-									<span class="badge bg-primary-500">#{index + 1}</span>
+									<span class="badge bg-surface-200">#{index + 1}</span>
 									<span class="flex-auto">
 										<dt class="whitespace-normal">{chapterPlan ?? ''}</dt>
 									</span>

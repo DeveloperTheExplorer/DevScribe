@@ -18,10 +18,8 @@
 </script>
 
 <QueryClientProvider client={queryClient}>
-	<AppShell>
+	<AppShell regionPage="relative">
 		<svelte:fragment slot="header"><Header /></svelte:fragment>
-		<!-- (sidebarRight) -->
-		<svelte:fragment slot="pageHeader">Page Header</svelte:fragment>
 		<!-- Router Slot -->
 		<slot />
 		<!-- ---- / ---- -->
