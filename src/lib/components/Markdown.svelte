@@ -13,8 +13,8 @@
 		});
 	});
 
-	export let content = `Marked - Markdown Parser
-========================
+	export let content = `
+## Marked - Markdown Parser
 
 [Marked] lets you convert [Markdown] into HTML.  Markdown is a simple text format whose goal is to be very easy to read and write, even when not converted to HTML.  This demo page will let you type anything you like and see how it gets converted.  Live.  No more waiting around.
 
@@ -67,6 +67,53 @@ button:focus {
 	outline: none;
 }
 \`\`\`
+
+\`\`\`html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />
+    
+		<!-- and it's easy to individually load additional languages -->
+    
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover" data-theme="skeleton">
+		<div style="display: contents" class="h-full overflow-hidden">Some text</div>
+	</body>
+</html>
+
+\`\`\`
+
+\`\`\`ts
+import { error } from "@sveltejs/kit";
+
+import type { PageServerLoad } from "./$types"
+
+import { CourseService } from "$lib/server/services/course.service";
+import { toObject } from "$lib/utils/mongo.util";
+import type { ICourse } from "$lib/types/course.type";
+
+export const load: PageServerLoad = async ({ params, parent }) => {
+  const { session } = await parent();
+
+  if (!session?.user) {
+    error(401, {
+      message: 'Unauthorized',
+    });
+  }
+
+  const courses = await CourseService.getCoursesByUserId(session.user.id!);
+
+  return {
+    courses: courses.map(toObject<ICourse>),
+  }
+}
+\`\`\`
+
 `;
 </script>
 

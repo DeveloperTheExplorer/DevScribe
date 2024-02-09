@@ -35,12 +35,5 @@
 		<CourseSidebar {course} class="h-screen overflow-y-auto pb-24" />
 	</div>
 
-	<div class="flex flex-col">
-		<!-- (pageHeader) -->
-		<div class="p-4 lg:p-10">
-			<h1>{course.name}</h1>
-		</div>
-		<!-- Router Slot -->
-		<slot />
-	</div>
+	<slot />
 </div>
