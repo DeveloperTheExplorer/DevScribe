@@ -1,27 +1,14 @@
 <script lang="ts">
 	import type { ICourse } from '$lib/types/course.type';
-	import { queryParam } from 'sveltekit-search-params';
+	import { lessonIndex, updateLessonIndex } from '$lib/stores/lessonQueryParam';
 
 	import TechList from './TechList.svelte';
 	import CourseSummary from './CourseSummary.svelte';
 
 	export let course: ICourse;
 
-	const chapterIndex = queryParam('chapter', {
-		encode: (value: number) => value.toString(),
-		decode: (value: string | null) => (value ? parseInt(value) : null)
-	});
-	const lessonIndex = queryParam('lesson', {
-		encode: (value: number) => value.toString(),
-		decode: (value: string | null) => (value ? parseInt(value) : null)
-	});
-	$: activeChapterIndex = chapterIndex || 0;
-	$: activeLessonIndex = lessonIndex || 0;
-
-	const handleUpdatePageParams = (chapterIndex: number, lessonIndex: number) => {
-		$chapterIndex = chapterIndex;
-		$lessonIndex = lessonIndex;
-	};
+	$: activeChapterIndex = $lessonIndex ? $lessonIndex[0] : 0;
+	$: activeLessonIndex = $lessonIndex ? $lessonIndex[1] : 0;
 </script>
 
 <div class="shadow-m flex flex-col bg-surface-100 {$$restProps.class}">
@@ -52,7 +39,7 @@
 					<ul class="mt-2 flex flex-col gap-4">
 						<button
 							class="flex w-full flex-row gap-2 rounded p-2 pl-0 hover:bg-surface-200"
-							on:click={() => handleUpdatePageParams(chapterIndex + 1, 0)}
+							on:click={() => updateLessonIndex([chapterIndex + 1, 0])}
 						>
 							<span class="badge bg-surface-200">#{chapterIndex + 1}.0</span>
 							<span class="flex-auto">
@@ -62,7 +49,7 @@
 						{#each chapter.lessons as lesson, lessonIndex}
 							<button
 								class="flex w-full flex-row gap-2 rounded p-2 pl-0 hover:bg-surface-200"
-								on:click={() => handleUpdatePageParams(chapterIndex, lessonIndex + 1)}
+								on:click={() => updateLessonIndex([chapterIndex + 1, lessonIndex + 1])}
 							>
 								<span class="badge bg-surface-200">#{chapterIndex + 1}.{lessonIndex + 1}</span>
 								<span class="flex-auto">
