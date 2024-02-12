@@ -41,15 +41,16 @@ export class DevScribeAILessonGenerator extends DevScribeAI {
     });
   }
 
-  async prompt(messages: PromptMessage[], callbacks?: OpenAIStreamCallbacks, userId?: string | null) {
+  async prompt(messages: PromptMessage[], callbacks: OpenAIStreamCallbacks, courseId: string, chapterIndex: number, lessonIndex: number) {
     return await super.prompt(messages, {
       onCompletion(completion) {
         console.log('completion :>> ', completion);
         // save results to database
-        if (!userId) throw new Error("Missing technologies or userId");
+        if (!courseId) throw new Error("Missing courseId");
 
-        CourseService.newCourse(completion, messages[messages.length - 1].content, model, new Types.ObjectId(userId));
-      }
+        CourseService.addLesson(courseId, completion, messages[messages.length - 1].content, model, chapterIndex, lessonIndex);
+      },
+      ...callbacks
     });
   }
 }

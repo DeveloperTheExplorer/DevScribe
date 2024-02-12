@@ -29,6 +29,7 @@ export interface IChapter {
   difficulty?: number;
   technologies: string[];
   modelUsed: string;
+  content?: string;
   lessons: ILesson[];
 }
 

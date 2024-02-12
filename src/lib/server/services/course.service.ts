@@ -87,6 +87,32 @@ class CourseService {
 
     return newCourse;
   }
+
+  async addLesson(courseId: string, lessonContent: string, prompt: string, modelUsed: string, chapterIndex: number, lessonIndex: number) {
+    const course = await CourseModel.findById(courseId);
+    if (!course) {
+      throw new Error('Course not found');
+    }
+
+    const lesson = course.chapters[chapterIndex].lessons[lessonIndex];
+
+    if (lesson.content && lesson.prompt) {
+      throw new Error('Lesson already exists');
+    }
+
+    course.chapters[chapterIndex].lessons[lessonIndex] = {
+      ...lesson,
+      content: lessonContent,
+      prompt,
+      modelUsed,
+      technologies: extractTechnologiesFromText(lessonContent),
+    };
+
+    course.markModified('chapters');
+    course.save();
+
+    return course;
+  }
 }
 
 const courseService = CourseService.get();

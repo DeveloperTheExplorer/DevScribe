@@ -29,7 +29,7 @@ export const POST = (async ({ request, locals }) => {
   }
 
   const devscribeAI = new DevScribeAIProjectPlanner({ stream: true });
-  const { stream } = await devscribeAI.prompt(messages as PromptMessage[], undefined, session.user.id);
+  const { stream } = await devscribeAI.prompt(messages as PromptMessage[], {}, session.user.id);
 
   return new StreamingTextResponse(stream);
 }) satisfies RequestHandler

@@ -29,6 +29,7 @@ const ChapterSchema = new Schema({
   difficulty: { type: Number },
   technologies: [{ type: String, required: true }],
   modelUsed: { type: String, required: true },
+  content: { type: String },
   lessons: [LessonSchema],
 });
 

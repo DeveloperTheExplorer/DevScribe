@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { useChat } from 'ai/svelte';
 	import type { PageData } from './$types';
 	import { lessonIndex, updateLessonIndex } from '$lib/stores/lessonQueryParam';
 
@@ -8,6 +9,10 @@
 	export let data: PageData;
 
 	const { course } = data;
+
+	const { messages, input, handleSubmit, isLoading } = useChat({
+		api: '/api/course'
+	});
 
 	$: activeChapterIndex = $lessonIndex ? $lessonIndex[0] - 1 : null;
 	$: activeLessonIndex = $lessonIndex ? $lessonIndex[1] - 1 : null;
@@ -22,6 +27,17 @@
 			}
 		}
 	}
+
+	const handleGenerateLesson = (chapterIndex: number, lessonIndex: number) => {
+		handleSubmit(null, {
+			options: {
+				body: {
+					chapterIndex,
+					lessonIndex
+				}
+			}
+		});
+	};
 </script>
 
 <svelte:head>
@@ -30,7 +46,7 @@
 
 <main class="flex w-full grow flex-col items-center p-4 lg:p-10">
 	<article class="w-full max-w-[1200px]">
-		<!-- <h1>{pageTitle}</h1> -->
+		<h1>{pageTitle}</h1>
 		<Markdown class="my-10" />
 	</article>
 </main>

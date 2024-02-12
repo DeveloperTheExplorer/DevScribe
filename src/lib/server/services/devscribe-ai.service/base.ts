@@ -45,7 +45,7 @@ export class DevScribeAI {
    * @param prompt 
    * @returns 
    */
-  async prompt(messages: PromptMessage[], callbacks?: OpenAIStreamCallbacks): Promise<{
+  async prompt(messages: PromptMessage[], callbacks: OpenAIStreamCallbacks, ...rest: any): Promise<{
     response: Stream<ChatCompletionChunk> | ChatCompletion;
     stream: ReadableStream<any>;
   }> {
