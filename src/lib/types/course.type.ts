@@ -9,6 +9,7 @@ export enum LessonStatus {
 }
 
 export interface ILesson {
+  _id?: Types.ObjectId | string;
   name: string;
   description?: string;
   duration?: number;
@@ -22,6 +23,7 @@ export interface ILesson {
 }
 
 export interface IChapter {
+  _id?: Types.ObjectId | string;
   name: string;
   description?: string;
   duration: number;
@@ -34,6 +36,7 @@ export interface IChapter {
 }
 
 export interface ICourse {
+  _id?: Types.ObjectId | string;
   student: Types.ObjectId | string;
   name: string;
   description?: string;

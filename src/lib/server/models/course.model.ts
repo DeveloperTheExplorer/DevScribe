@@ -6,7 +6,9 @@ import { enumValues } from "$lib/utils/type.utils";
 import { LessonStatus, type ICourse } from "$lib/types/course.type";
 
 
-interface ICourseModel extends ICourse, Document { }
+export interface ICourseModel extends Omit<ICourse, '_id'>, Document { }
+
+export const SOME_VALUE = 1;
 
 const LessonSchema = new Schema({
   name: { type: String, required: true },
@@ -71,7 +73,10 @@ CourseSchema.pre<ICourseModel>('save', function (next) {
     }
   }
   this.progress = Math.round((completedLessons / totalLessons) * 100);
-  this.slug = slugify(this.name);
+  if (!this.slug) {
+    this.slug = slugify(this.name);
+  }
+
   next();
 });
 

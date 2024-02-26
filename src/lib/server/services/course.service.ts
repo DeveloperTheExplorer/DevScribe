@@ -7,7 +7,7 @@ import type { RawCourse } from '../types';
 import { HashType, determineHashType, hashValue } from '$lib/utils/hash.util';
 import { slugify } from '$lib/utils/string.util';
 import { extractTechnologiesFromText } from '$lib/utils/technologies.util';
-import type { ICourse } from '$lib/types/course.type';
+import { LessonStatus, type ICourse } from '$lib/types/course.type';
 import { SkillCategory } from '$lib/types/skill-category.types';
 
 class CourseService {
@@ -99,17 +99,23 @@ class CourseService {
     if (lesson.content && lesson.prompt) {
       throw new Error('Lesson already exists');
     }
+    console.log('before lesson :>> ', lesson);
 
     course.chapters[chapterIndex].lessons[lessonIndex] = {
       ...lesson,
+      name: lesson.name,
+      description: lesson.description,
       content: lessonContent,
+      status: LessonStatus.IN_PROGRESS,
       prompt,
       modelUsed,
       technologies: extractTechnologiesFromText(lessonContent),
     };
 
+    console.log('after lesson :>> ', course.chapters[chapterIndex].lessons[lessonIndex]);
+
     course.markModified('chapters');
-    course.save();
+    await course.save();
 
     return course;
   }

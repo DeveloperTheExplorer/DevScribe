@@ -1,21 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { afterUpdate } from 'svelte';
 	import { marked } from 'marked';
-	import hljs from 'highlight.js/lib/common';
 
-	import { addCopyButtonToHljs } from '$lib/utils/markdown.util';
-
-	onMount(() => {
-		document.querySelectorAll('.markdown-view pre code').forEach((elem) => {
-			if (!(elem instanceof HTMLElement)) return;
-			hljs.highlightElement(elem);
-			addCopyButtonToHljs({ el: elem, text: elem.innerText });
-		});
-	});
+	import { highlightAllCodeSnippets } from '$lib/utils/markdown.util';
 
 	export let content = ``;
+
+	console.log('content :>> ', content);
+
+	afterUpdate(highlightAllCodeSnippets);
 </script>
 
 <div {...$$restProps} class="markdown-view max-w-full {$$restProps.class}">
-	{@html marked(content)}
+	{#if content && content !== ''}
+		{@html marked(content)}
+	{/if}
 </div>

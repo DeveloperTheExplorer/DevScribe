@@ -1,3 +1,5 @@
+import hljs from 'highlight.js/lib/common';
+
 /**
  *  @author Arron Hunt <arronjhunt@gmail.com>
  *  @copyright Copyright 2021. All rights reserved.
@@ -52,4 +54,15 @@ export const addCopyButtonToHljs = ({ el, text }: { el: Element, text: string })
         }, 2000);
       });
   };
+}
+
+/**
+ *  @description Highlights all code snippets in the markdown view and adds a copy button to each code block.
+ */
+export const highlightAllCodeSnippets = (selectors = '.markdown-view pre code') => {
+  document.querySelectorAll(selectors).forEach((elem) => {
+    if (!(elem instanceof HTMLElement)) return;
+    hljs.highlightElement(elem);
+    addCopyButtonToHljs({ el: elem, text: elem.innerText });
+  });
 }
