@@ -16,6 +16,14 @@ export const hashValue = (value: string) => {
 }
 
 /**
+ * Generates a random UUID
+ * @returns a random UUID
+ */
+export const generateUUID = () => {
+  return crypto.randomUUID();
+}
+
+/**
  * Generates a random hex string of length len
  * @param len length of the random hex string to generate
  * @returns a random hex string of length len

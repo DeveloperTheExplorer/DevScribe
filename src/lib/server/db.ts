@@ -1,19 +1,14 @@
 import mongoose from 'mongoose';
 
-import { MONGO_DB_URI } from '$env/static/private';
+import { DB_HOST, DB_USERNAME, DB_PASSWORD } from '$env/static/private';
 
-const connectDb = async () => {
-  const ret = await mongoose.connect(MONGO_DB_URI);
-  const connection = ret.connection;
-  const mongoDbClient = connection.getClient();
+import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { Client } from "@planetscale/database";
 
-  return mongoDbClient;
-}
+const client = new Client({
+  host: DB_HOST,
+  username: DB_USERNAME,
+  password: DB_PASSWORD,
+});
 
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
-
-export const mongoDbClient = connectDb();
-
-export default db;
+export const db = drizzle(client);

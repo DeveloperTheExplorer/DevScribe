@@ -1,83 +1,52 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import { mysqlTable, serial, text, varchar, int } from 'drizzle-orm/mysql-core';
+import { drizzle } from 'drizzle-orm/mysql2';
 
-import { slugify } from "$lib/utils/string.util";
+import { db } from '../db';
 
-import { enumValues } from "$lib/utils/type.utils";
-import { LessonStatus, type ICourse } from "$lib/types/course.type";
+import { generateUUID } from '$lib/utils/hash.util';
+import { slugify } from '$lib/utils/string.util';
 
+export const chapters = mysqlTable('chapters', {
+  id: varchar('id', { length: 128 }).$defaultFn(generateUUID),
+  name: varchar('name', { length: 128 }).notNull(),
+  slug: varchar('slug', { length: 128 }).unique().notNull(),
+  description: text('description'),
+  duration: int('duration').notNull(),
+  progress: int('progress').notNull().$default(() => 0),
+  skills: text('skills'),
+  difficulty: int('difficulty'),
+  technologies: text('technologies').notNull(),
+  modelUsed: varchar('model_used', { length: 128 }).notNull(),
+  prompt: text('prompt').notNull(),
+  promptHash: text('prompt_hash').notNull(),
+  contentHash: text('content_hash').notNull().unique(),
+  content: text('content'),
 
-export interface ICourseModel extends Omit<ICourse, '_id'>, Document { }
-
-export const SOME_VALUE = 1;
-
-const LessonSchema = new Schema({
-  name: { type: String, required: true },
-  description: { type: String },
-  duration: { type: Number },
-  skills: [{ type: String }],
-  difficulty: { type: Number },
-  technologies: [{ type: String, required: true }],
-  status: { type: String, enum: enumValues(LessonStatus), default: LessonStatus.NOT_STARTED, required: true },
-  modelUsed: { type: String },
-  content: { type: String },
-  prompt: { type: String, required: true }
 });
 
-const ChapterSchema = new Schema({
-  name: { type: String, required: true },
-  description: { type: String },
-  duration: { type: Number, required: true },
-  skills: [{ type: String }],
-  difficulty: { type: Number },
-  technologies: [{ type: String, required: true }],
-  modelUsed: { type: String, required: true },
-  content: { type: String },
-  lessons: [LessonSchema],
-});
 
-const CourseSchema = new Schema({
-  student: { type: Schema.Types.ObjectId, required: true },
-  name: { type: String, required: true },
-  slug: { type: String, unique: true },
-  description: { type: String },
-  duration: { type: Number, required: true },
-  progress: { type: Number, default: 0 },
-  skills: [{ type: String }],
-  difficulty: { type: Number },
-  technologies: [{ type: String, required: true }],
-  chapters: [ChapterSchema],
-  modelUsed: { type: String, required: true },
-  prompt: { type: String, required: true },
-  promptHash: { type: String, required: true },
-  contentHash: { type: String, required: true, unique: true },
-  content: { type: String, required: true }
-}, {
-  toJSON: {
-    transform: (doc, ret) => {
-      delete ret._id;
-      delete ret.__v;
-    }
-  }
-});
+// export type User = typeof users.$inferSelect; // return type when queried
+// export type NewUser = typeof users.$inferInsert; // insert type
 
-CourseSchema.pre<ICourseModel>('save', function (next) {
 
-  let totalLessons = 0,
-    completedLessons = 0;
-  for (const chapter of this.chapters) {
-    for (const lesson of chapter.lessons) {
-      totalLessons++;
-      if (lesson.status === LessonStatus.COMPLETED) {
-        completedLessons++;
-      }
-    }
-  }
-  this.progress = Math.round((completedLessons / totalLessons) * 100);
-  if (!this.slug) {
-    this.slug = slugify(this.name);
-  }
-
-  next();
-});
-
-export const CourseModel = mongoose.model<ICourseModel>('Course', CourseSchema);
+// const CourseSchema = new Schema({
+//   student: { type: Schema.Types.ObjectId, required: true },
+//   name: { type: String, required: true },
+//   slug: { type: String, unique: true },
+//   description: { type: String },
+//   duration: { type: Number, required: true },
+//   progress: { type: Number, default: 0 },
+//   skills: [{ type: String }],
+//   difficulty: { type: Number },
+//   technologies: [{ type: String, required: true }],
+//   chapters: [ChapterSchema],
+//   modelUsed: { type: String, required: true },
+//   prompt: { type: String, required: true },
+//   promptHash: { type: String, required: true },
+//   contentHash: { type: String, required: true, unique: true },
+//   content: { type: String, required: true }
+// }, (courses) => {
+//   return {
+//     nameIndex: courses.name
+//   }
+// });
