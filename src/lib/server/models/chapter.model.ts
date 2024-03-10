@@ -1,12 +1,13 @@
-import { mysqlTable, serial, text, varchar, int } from 'drizzle-orm/mysql-core';
-import { drizzle } from 'drizzle-orm/mysql2';
 
-import { db } from '../db';
+import { relations } from 'drizzle-orm';
+import { mysqlTable, text, varchar, int } from 'drizzle-orm/mysql-core';
 
 import { generateUUID } from '$lib/utils/hash.util';
+import { lessons } from './lesson.model';
+import { courses } from './course.model';
 
 export const chapters = mysqlTable('chapters', {
-  id: varchar('id', { length: 128 }).$defaultFn(generateUUID),
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(generateUUID),
   name: varchar('name', { length: 128 }),
   description: text('description'),
   duration: int('duration'),
@@ -15,19 +16,16 @@ export const chapters = mysqlTable('chapters', {
   technologies: text('technologies'),
   modelUsed: varchar('model_used', { length: 128 }),
   content: text('content'),
+  courseId: varchar('course_id', { length: 36 }).references(() => courses.id)
 });
-// export type User = typeof users.$inferSelect; // return type when queried
-// export type NewUser = typeof users.$inferInsert; // insert type
 
-// export interface IChapter {
-//   id: string; // uuid
-//   name: string;
-//   description?: string;
-//   duration: number;
-//   skills?: SkillCategory[];
-//   difficulty?: number;
-//   technologies: string[];
-//   modelUsed: string;
-//   content?: string;
-//   lessons: ILesson[];
-// }
+export const chapterRelations = relations(chapters, ({ one, many }) => ({
+  lessons: many(lessons),
+  course: one(courses, {
+    fields: [chapters.courseId],
+    references: [courses.id]
+  })
+}));
+
+export type IChapter = typeof chapters.$inferSelect; // return type when queried
+export type NewChapter = typeof chapters.$inferInsert; // insert type

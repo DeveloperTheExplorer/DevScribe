@@ -1,10 +1,9 @@
-import { mysqlTable, serial, text, varchar, int, mysqlEnum } from 'drizzle-orm/mysql-core';
-import { drizzle } from 'drizzle-orm/mysql2';
-
-import { db } from '../db';
+import { relations } from 'drizzle-orm';
+import { mysqlTable, text, varchar, int, mysqlEnum } from 'drizzle-orm/mysql-core';
 
 import { generateUUID } from '$lib/utils/hash.util';
 import { drizzleEnum } from "$lib/utils/type.utils";
+import { chapters } from './chapter.model';
 
 export enum LessonStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -13,7 +12,7 @@ export enum LessonStatus {
 }
 
 export const lessons = mysqlTable('lessons', {
-  id: varchar('id', { length: 128 }).$defaultFn(generateUUID),
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(generateUUID),
   name: varchar('name', { length: 128 }),
   description: text('description'),
   duration: int('duration'),
@@ -24,18 +23,16 @@ export const lessons = mysqlTable('lessons', {
   modelUsed: varchar('model_used', { length: 128 }),
   content: text('content'),
   prompt: text('prompt'),
+  chapterId: varchar('chapter_id', { length: 36 }).references(() => chapters.id)
 });
 
-// export interface ILesson {
-//   _id?: Types.ObjectId | string;
-//   name: string;
-//   description?: string;
-//   duration?: number;
-//   skills?: SkillCategory[];
-//   difficulty?: number;
-//   technologies: string[];
-//   status?: LessonStatus;
-//   modelUsed?: string;
-//   content?: string;
-//   prompt: string;
-// }
+
+export const lessonRelations = relations(lessons, ({ one }) => ({
+  chapter: one(chapters, {
+    fields: [lessons.chapterId],
+    references: [chapters.id]
+  })
+}));
+
+export type ILesson = typeof lessons.$inferSelect; // return type when queried
+export type NewLesson = typeof lessons.$inferInsert; // insert type

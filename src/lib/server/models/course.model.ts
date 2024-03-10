@@ -1,13 +1,12 @@
-import { mysqlTable, serial, text, varchar, int } from 'drizzle-orm/mysql-core';
-import { drizzle } from 'drizzle-orm/mysql2';
-
-import { db } from '../db';
+import { relations } from 'drizzle-orm';
+import { mysqlTable, text, varchar, int } from 'drizzle-orm/mysql-core';
 
 import { generateUUID } from '$lib/utils/hash.util';
-import { slugify } from '$lib/utils/string.util';
+import { chapters } from './chapter.model';
+import { users } from './user.model';
 
-export const chapters = mysqlTable('chapters', {
-  id: varchar('id', { length: 128 }).$defaultFn(generateUUID),
+export const courses = mysqlTable('courses', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(generateUUID),
   name: varchar('name', { length: 128 }).notNull(),
   slug: varchar('slug', { length: 128 }).unique().notNull(),
   description: text('description'),
@@ -19,34 +18,18 @@ export const chapters = mysqlTable('chapters', {
   modelUsed: varchar('model_used', { length: 128 }).notNull(),
   prompt: text('prompt').notNull(),
   promptHash: text('prompt_hash').notNull(),
-  contentHash: text('content_hash').notNull().unique(),
+  contentHash: varchar('content_hash', { length: 64 }).notNull().unique(),
   content: text('content'),
-
+  ownerId: varchar('owner_id', { length: 36 }).notNull().references(() => users.id),
 });
 
+export const courseRelations = relations(courses, ({ many, one }) => ({
+  chapters: many(chapters),
+  owner: one(users, {
+    fields: [courses.ownerId],
+    references: [users.id]
+  })
+}));
 
-// export type User = typeof users.$inferSelect; // return type when queried
-// export type NewUser = typeof users.$inferInsert; // insert type
-
-
-// const CourseSchema = new Schema({
-//   student: { type: Schema.Types.ObjectId, required: true },
-//   name: { type: String, required: true },
-//   slug: { type: String, unique: true },
-//   description: { type: String },
-//   duration: { type: Number, required: true },
-//   progress: { type: Number, default: 0 },
-//   skills: [{ type: String }],
-//   difficulty: { type: Number },
-//   technologies: [{ type: String, required: true }],
-//   chapters: [ChapterSchema],
-//   modelUsed: { type: String, required: true },
-//   prompt: { type: String, required: true },
-//   promptHash: { type: String, required: true },
-//   contentHash: { type: String, required: true, unique: true },
-//   content: { type: String, required: true }
-// }, (courses) => {
-//   return {
-//     nameIndex: courses.name
-//   }
-// });
+export type ICourse = typeof courses.$inferSelect; // return type when queried
+export type NewCourse = typeof courses.$inferInsert; // insert type

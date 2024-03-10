@@ -1,12 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { relations } from 'drizzle-orm';
+import { mysqlTable, text, varchar, int } from 'drizzle-orm/mysql-core';
 
-import { SkillCategoryValues, SkillCategory } from '$lib/types/skill-category.types';
+import { generateUUID } from '$lib/utils/hash.util';
 
-export interface IUser extends Document {
-  name: string;
-  email: string;
-  skills: ISkill[];
-}
+import { SkillCategory } from '$lib/types/skill-category.types';
+import { courses } from './course.model';
 export interface ISkill {
   name: string;
   description?: string;
@@ -15,25 +13,16 @@ export interface ISkill {
   tags?: string[];
 }
 
-const SkillsSchema: Schema = new Schema({
-  name: { type: String, required: true },
-  description: { type: String },
-  category: {
-    type: String,
-    enum: SkillCategoryValues,
-    default: SkillCategory.OTHER,
-  },
-  skillLevel: { type: Number, default: 0 },
-  tags: { type: [String] }
+export const users = mysqlTable('users', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(generateUUID),
+  name: varchar('name', { length: 128 }),
+  email: varchar('email', { length: 128 }).unique().notNull(),
+  skills: text('skills')
 });
 
-const UserSchema: Schema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  skills: {
-    type: [SkillsSchema],
-    default: [],
-  }
-});
+export const userRelations = relations(users, ({ many }) => ({
+  courses: many(courses)
+}));
 
-export default mongoose.model<IUser>('User', UserSchema);
+export type IUser = typeof users.$inferSelect; // return type when queried
+export type NewUser = typeof users.$inferInsert; // insert type
