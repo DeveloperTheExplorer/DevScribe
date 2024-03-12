@@ -1,30 +1,28 @@
-import { error } from "@sveltejs/kit";
+import { error } from '@sveltejs/kit';
 
-import type { LayoutServerLoad } from "./$types"
+import type { LayoutServerLoad } from './$types';
 
-import { CourseService } from "$lib/server/services/course.service";
-import type { ICourse } from "$lib/types/course.type";
-import { toObject } from "$lib/utils/mongo.util";
+import { CourseService } from '$lib/server/services/course.service';
 
 export const load: LayoutServerLoad = async ({ params, parent }) => {
-  const { session } = await parent();
-  const { slug } = params;
+	const { session } = await parent();
+	const { slug } = params;
 
-  if (!slug) {
-    error(404, {
-      message: 'Not Found',
-    })
-  }
+	if (!slug) {
+		error(404, {
+			message: 'Not Found'
+		});
+	}
 
-  const course = await CourseService.getCourseByUnknownIdentifier(slug);
+	const course = await CourseService.getCourseByUnknownIdentifier(slug);
 
-  if (!course) {
-    error(404, {
-      message: 'Not found',
-    })
-  }
+	if (!course) {
+		error(404, {
+			message: 'Not found'
+		});
+	}
 
-  return {
-    course: toObject<ICourse>(course),
-  }
-}
+	return {
+		course
+	};
+};

@@ -11,15 +11,17 @@ import { hashValue } from '../utils/hash.util';
 export type NewChapterWithLessons = NewChapter & { lessons: NewLesson[] };
 
 class CourseRepository {
-	async getCourse(courseId: string) {
-		return await db
+	async getById(courseId: string) {
+		return db
 			.select()
 			.from(courses)
+			.leftJoin(chapters, eq(courses.id, chapters.courseId))
+			.leftJoin(lessons, eq(chapters.id, lessons.chapterId))
 			.where(eq(courses.id, courseId))
-			.then((res) => res[0]);
+			.all();
 	}
 
-	async getCourseBySlug(slug: string) {
+	async getBySlug(slug: string) {
 		return await db
 			.select()
 			.from(courses)
@@ -27,7 +29,7 @@ class CourseRepository {
 			.then((res) => res[0]);
 	}
 
-	async getCourseByPrompt(prompt: string) {
+	async getByPrompt(prompt: string) {
 		return await db
 			.select()
 			.from(courses)
@@ -35,7 +37,7 @@ class CourseRepository {
 			.then((res) => res[0]);
 	}
 
-	async getCoursesByUserId(studentId: string) {
+	async getAllFromUserId(studentId: string) {
 		return await db
 			.select()
 			.from(courses)
@@ -43,7 +45,7 @@ class CourseRepository {
 			.orderBy(desc(courses.progress));
 	}
 
-	async createCourse(course: NewCourse, chaptersWithLessons: NewChapterWithLessons[]) {
+	async create(course: NewCourse, chaptersWithLessons: NewChapterWithLessons[]) {
 		const slug = slugify(course.name);
 		const newCourse = await db.insert(courses).values({ ...course, slug });
 
