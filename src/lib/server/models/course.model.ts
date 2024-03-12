@@ -32,4 +32,6 @@ export const courseRelations = relations(courses, ({ many, one }) => ({
 }));
 
 export type ICourse = typeof courses.$inferSelect; // return type when queried
-export type NewCourse = typeof courses.$inferInsert; // insert type
+export type NewCourse = Omit<typeof courses.$inferInsert, 'slug'> & {
+  slug?: string;
+};
