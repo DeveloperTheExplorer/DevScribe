@@ -26,7 +26,7 @@ class CourseService {
 		if (hashType === HashType.UUID) {
 			return await this.getCourse(identifier);
 		}
-		return await CourseRepository.getBySlug(identifier);
+		return await CourseRepository.getByIdentifier({ slug: identifier });
 	}
 
 	async create(course: string, prompt: string, modelUsed: string, userId: string) {

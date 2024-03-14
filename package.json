@@ -52,9 +52,10 @@
   },
   "type": "module",
   "dependencies": {
-    "@auth/core": "^0.17.0",
+    "@auth/core": "^0.28.0",
+    "@auth/drizzle-adapter": "^0.8.0",
     "@auth/mongodb-adapter": "^2.0.2",
-    "@auth/sveltekit": "^0.3.10",
+    "@auth/sveltekit": "^0.14.0",
     "@floating-ui/dom": "^1.6.1",
     "@planetscale/database": "^1.16.0",
     "@sveltestack/svelte-query": "^1.6.0",

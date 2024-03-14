@@ -1,7 +1,7 @@
 import { db } from '../db';
 
 import { chapters, type NewChapter } from '../models/chapter.model';
-import { courses, type NewCourse } from '../models/course.model';
+import { courses, type ICourse, type NewCourse } from '../models/course.model';
 import { lessons, type NewLesson } from '../models/lesson.model';
 
 import { slugify } from '$lib/utils/string.util';
@@ -9,40 +9,63 @@ import { and, desc, eq, isNull } from 'drizzle-orm';
 import { hashValue } from '../utils/hash.util';
 
 export type NewChapterWithLessons = NewChapter & { lessons: NewLesson[] };
+export type CourseIdentifier<T extends keyof ICourse> = Pick<ICourse, T>;
 
 class CourseRepository {
 	async getById(courseId: string) {
-		return db
-			.select()
-			.from(courses)
-			.leftJoin(chapters, eq(courses.id, chapters.courseId))
-			.leftJoin(lessons, eq(chapters.id, lessons.chapterId))
-			.where(eq(courses.id, courseId))
-			.all();
+		return await db.query.courses.findFirst({
+			where: eq(courses.id, courseId),
+			with: {
+				chapters: {
+					with: {
+						lessons: true
+					}
+				}
+			}
+		});
 	}
 
-	async getBySlug(slug: string) {
-		return await db
-			.select()
-			.from(courses)
-			.where(eq(courses.slug, slug))
-			.then((res) => res[0]);
+	async getByIdentifier<T extends keyof ICourse>(identifier: CourseIdentifier<T>) {
+		const [key] = Object.keys(identifier) as [keyof ICourse];
+		let [value] = Object.values(identifier) as [string | number];
+
+		return await db.query.courses.findFirst({
+			where: eq(courses[key], value),
+			with: {
+				chapters: {
+					with: {
+						lessons: true
+					}
+				}
+			}
+		});
 	}
 
 	async getByPrompt(prompt: string) {
-		return await db
-			.select()
-			.from(courses)
-			.where(eq(courses.promptHash, hashValue(prompt)))
-			.then((res) => res[0]);
+		return await db.query.courses.findFirst({
+			where: eq(courses.promptHash, hashValue(prompt)),
+			with: {
+				chapters: {
+					with: {
+						lessons: true
+					}
+				}
+			}
+		});
 	}
 
 	async getAllFromUserId(studentId: string) {
-		return await db
-			.select()
-			.from(courses)
-			.where(eq(courses.ownerId, studentId))
-			.orderBy(desc(courses.progress));
+		return await db.query.courses.findMany({
+			where: eq(courses.ownerId, studentId),
+			with: {
+				chapters: {
+					with: {
+						lessons: true
+					}
+				}
+			},
+			orderBy: desc(courses.progress)
+		});
 	}
 
 	async create(course: NewCourse, chaptersWithLessons: NewChapterWithLessons[]) {
