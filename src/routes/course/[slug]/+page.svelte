@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { useChat } from 'ai/svelte';
 	import type { PageData } from './$types';
-	import type { ICourseModel } from '$lib/server/models/course.model';
 
 	import { lessonIndex } from '$lib/stores/lessonQueryParam';
 	import { highlightAllCodeSnippets } from '$lib/utils/markdown.util';
@@ -9,8 +8,6 @@
 	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let data: PageData;
-
-	let abcd: ICourseModel;
 
 	const { course } = data;
 	let lessonContent: string;
