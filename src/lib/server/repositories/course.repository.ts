@@ -1,11 +1,10 @@
-import { db } from '../db';
+import { em } from '../db';
 
-import { chapters, type NewChapter } from '../models/chapter.model';
-import { courses, type ICourse, type NewCourse } from '../models/course.model';
-import { lessons, type NewLesson } from '../models/lesson.model';
+import { Chapter, type NewChapter } from '../models/chapter.model';
+import { Course, type ICourse, type NewCourse } from '../models/course.model';
+import { Lesson, type NewLesson } from '../models/lesson.model';
 
 import { slugify } from '$lib/utils/string.util';
-import { and, desc, eq, isNull } from 'drizzle-orm';
 import { hashValue } from '../utils/hash.util';
 
 export type NewChapterWithLessons = NewChapter & { lessons: NewLesson[] };
@@ -13,59 +12,34 @@ export type CourseIdentifier<T extends keyof ICourse> = Pick<ICourse, T>;
 
 class CourseRepository {
 	async getById(courseId: string) {
-		return await db.query.courses.findFirst({
-			where: eq(courses.id, courseId),
-			with: {
-				chapters: {
-					with: {
-						lessons: true
-					}
-				}
-			}
-		});
+		const qb = em.createQueryBuilder(Course, 'course');
+
+		return await qb
+			.select('*')
+			.where({ 'course.id': courseId })
+			.leftJoinAndSelect('course.chapters', 'chapters')
+			.leftJoinAndSelect('chapters.lessons', 'lessons');
 	}
 
 	async getByIdentifier<T extends keyof ICourse>(identifier: CourseIdentifier<T>) {
+		const qb = em.createQueryBuilder(Course, 'course');
 		const [key] = Object.keys(identifier) as [keyof ICourse];
 		let [value] = Object.values(identifier) as [string | number];
 
-		return await db.query.courses.findFirst({
-			where: eq(courses[key], value),
-			with: {
-				chapters: {
-					with: {
-						lessons: true
-					}
-				}
-			}
-		});
+		return await qb
+			.select('*')
+			.where({ [`course.${key}`]: value })
+			.leftJoinAndSelect('course.chapters', 'chapters')
+			.leftJoinAndSelect('chapters.lessons', 'lessons');
 	}
 
 	async getByPrompt(prompt: string) {
-		return await db.query.courses.findFirst({
-			where: eq(courses.promptHash, hashValue(prompt)),
-			with: {
-				chapters: {
-					with: {
-						lessons: true
-					}
-				}
-			}
-		});
-	}
-
-	async getAllFromUserId(studentId: string) {
-		return await db.query.courses.findMany({
-			where: eq(courses.ownerId, studentId),
-			with: {
-				chapters: {
-					with: {
-						lessons: true
-					}
-				}
-			},
-			orderBy: desc(courses.progress)
-		});
+		const qb = em.createQueryBuilder(Course, 'course');
+		return await qb
+			.select('*')
+			.where({ prompt: prompt })
+			.leftJoinAndSelect('course.chapters', 'chapters')
+			.leftJoinAndSelect('chapters.lessons', 'lessons');
 	}
 
 	async create(course: NewCourse, chaptersWithLessons: NewChapterWithLessons[]) {
