@@ -2,7 +2,7 @@ import { em } from '../db';
 
 import { Chapter, type NewChapter } from '../models/chapter.model';
 import { Course, type ICourse, type NewCourse } from '../models/course.model';
-import { Lesson, type NewLesson } from '../models/lesson.model';
+import { Lesson, LessonThread, type NewLesson, type NewLessonThread } from '../models/lesson.model';
 
 import { slugify } from '$lib/utils/string.util';
 import { hashValue } from '../utils/hash.util';
@@ -43,28 +43,34 @@ class CourseRepository {
 	}
 
 	async create(course: NewCourse, chaptersWithLessons: NewChapterWithLessons[]) {
-		const slug = slugify(course.name);
-		const newCourse = await db.insert(courses).values({ ...course, slug });
+		const newCourse = new Course({ ...course });
+		em.persist(newCourse);
 
 		for (const chapter of chaptersWithLessons) {
-			const newChapter = await db
-				.insert(chapters)
-				.values({ ...chapter, courseId: newCourse.insertId });
+			const newChapter = new Chapter({ ...chapter, course: newCourse });
+			em.persist(newChapter);
+
 			for (const lessonIndex in chapter.lessons) {
-				await db.insert(lessons).values({
+				const newLesson = new Lesson({
 					...chapter.lessons[+lessonIndex],
 					lessonIndex: +lessonIndex,
-					chapterId: newChapter.insertId
+					chapter: newChapter
 				});
+				em.persist(newLesson);
 			}
 		}
+		await em.flush();
 
-		return { id: newCourse.insertId, slug };
+		return { id: newCourse.id, slug: newCourse.slug };
 	}
 
-	async addLesson(lesson: NewLesson, chapterId: string, betweenIndexes: [number, number]) {
-		const lessonIndex = betweenIndexes[0] + Math.round((betweenIndexes[1] - betweenIndexes[0]) / 2);
-		return await db.insert(lessons).values({ ...lesson, lessonIndex, chapterId });
+	async addLessonThread(lesson: NewLessonThread, lessonId: string) {
+		const lessonRef = await em.getReference(Lesson, lessonId);
+		const newLessonThread = new LessonThread({ ...lesson, lesson: lessonRef });
+		em.persist(newLessonThread);
+		await em.flush();
+
+		return newLessonThread;
 	}
 
 	async addLessonContent(
@@ -73,12 +79,12 @@ class CourseRepository {
 		modelUsed: string,
 		lessonId: string
 	) {
-		const lesson = await db
-			.update(lessons)
-			.set({ content: lessonContent, prompt, modelUsed })
-			.where(and(eq(lessons.id, lessonId), isNull(lessons.content)));
+		const lessonRef = await em.getReference(Lesson, lessonId);
+		lessonRef.content = lessonContent;
+		lessonRef.prompt = prompt;
+		lessonRef.modelUsed = modelUsed;
 
-		return lesson.rowsAffected;
+		await em.flush();
 	}
 }
 

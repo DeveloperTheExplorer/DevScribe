@@ -13,7 +13,7 @@ import { defaultEntities } from '@auth/mikro-orm-adapter';
 
 import { Course } from './course.model';
 import { Prompt, PromptThread } from './prompt-history.model';
-import { generateUUID } from '$lib/utils/hash.util';
+import { BaseModel } from './base.model';
 
 export enum UserRole {
 	ADMIN = 'ADMIN',
@@ -22,10 +22,7 @@ export enum UserRole {
 }
 
 @Entity()
-export class User implements defaultEntities.User {
-	@PrimaryKey()
-	id: string = generateUUID();
-
+export class User extends BaseModel implements defaultEntities.User {
 	@Property({ nullable: true })
 	name?: string;
 

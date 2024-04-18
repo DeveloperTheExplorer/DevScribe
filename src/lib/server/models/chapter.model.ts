@@ -11,12 +11,10 @@ import {
 import { generateUUID } from '$lib/utils/hash.util';
 import { Lesson } from './lesson.model';
 import { Course } from './course.model';
+import { BaseModel } from './base.model';
 
 @Entity()
-export class Chapter {
-	@PrimaryKey({ type: 'uuid' })
-	id = generateUUID();
-
+export class Chapter extends BaseModel {
 	@Property()
 	name!: string;
 
@@ -48,6 +46,7 @@ export class Chapter {
 	lessons = new Collection<Lesson>(this);
 
 	constructor(chapter: NewChapter) {
+		super();
 		this.name = chapter.name;
 		this.description = chapter.description;
 		this.duration = chapter.duration;

@@ -12,12 +12,10 @@ import { generateUUID } from '$lib/utils/hash.util';
 import { Chapter } from './chapter.model';
 import { User } from './user.model';
 import { slugify } from '$lib/utils/string.util';
+import { BaseModel } from './base.model';
 
 @Entity()
-export class Course {
-	@PrimaryKey({ type: 'uuid' })
-	id = generateUUID();
-
+export class Course extends BaseModel {
 	@Property()
 	name!: string;
 
@@ -64,6 +62,7 @@ export class Course {
 	chapters = new Collection<Chapter>(this);
 
 	constructor(course: NewCourse) {
+		super();
 		this.name = course.name;
 		this.slug = slugify(course.name);
 		this.description = course.description;

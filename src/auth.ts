@@ -1,5 +1,5 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { MikroOrmAdapter } from '@auth/mikro-orm-adapter';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 // import Apple from "@auth/core/providers/apple";
@@ -13,10 +13,10 @@ import {
 	AUTH_APPLE_ID,
 	AUTH_APPLE_SECRET
 } from '$env/static/private';
-import { db } from '$lib/server/db';
+import { config } from '$lib/server/db';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
-	adapter: DrizzleAdapter(db),
+	adapter: MikroOrmAdapter(config),
 	providers: [
 		GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET }),
 		Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET })

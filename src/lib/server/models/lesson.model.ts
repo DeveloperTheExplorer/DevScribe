@@ -1,12 +1,18 @@
-import { Entity, ManyToOne, PrimaryKey, Property, type Opt } from '@mikro-orm/core';
+import { Entity, Enum, ManyToOne, PrimaryKey, Property, type Opt } from '@mikro-orm/core';
 
 import { generateUUID } from '$lib/utils/hash.util';
 import { Chapter } from './chapter.model';
 
 import { slugify } from '$lib/utils/string.util';
+import { BaseModel } from './base.model';
+
+export enum LessonThreadType {
+	QUESTION = 'question',
+	EXTENSION = 'extension'
+}
 
 @Entity()
-export class Lesson {
+export class Lesson extends BaseModel {
 	@PrimaryKey({ type: 'uuid' })
 	id = generateUUID();
 
@@ -44,6 +50,7 @@ export class Lesson {
 	chapter!: Chapter;
 
 	constructor(lesson: NewLesson) {
+		super();
 		this.name = lesson.name;
 		this.description = lesson.description;
 		this.duration = lesson.duration;
@@ -61,6 +68,36 @@ export type ILesson = Lesson;
 export type NewLesson = Omit<Lesson, 'id' | 'lessonIndex'> & {
 	lessonIndex?: number;
 };
+
+@Entity()
+export class LessonThread extends BaseModel {
+	@Property()
+	prompt!: string;
+
+	@Enum({})
+	type?: LessonThreadType & Opt = LessonThreadType.EXTENSION;
+
+	@Property()
+	modelUsed?: string;
+
+	@Property()
+	content?: string;
+
+	@ManyToOne(() => Lesson)
+	lesson!: Lesson;
+
+	constructor(lessonThread: NewLessonThread) {
+		super();
+		this.prompt = lessonThread.prompt;
+		this.modelUsed = lessonThread.modelUsed;
+		this.content = lessonThread.content;
+
+		if (lessonThread.type) this.type = lessonThread.type;
+	}
+}
+
+export type ILessonThread = LessonThread;
+export type NewLessonThread = Omit<LessonThread, 'id'>;
 
 // export enum LessonStatus {
 // 	NOT_STARTED = 'NOT_STARTED',

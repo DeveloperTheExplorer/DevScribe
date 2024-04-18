@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import type { OpenAIStreamCallbacks } from 'ai';
 import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 

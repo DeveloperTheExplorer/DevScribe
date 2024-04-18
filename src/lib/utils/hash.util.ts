@@ -20,7 +20,7 @@ export const hashValue = (value: string) => {
  * Generates a random UUID
  * @returns a random UUID
  */
-export const generateUUID = () => {
+export const generateUUID = (): string => {
 	return crypto.randomUUID();
 };
 

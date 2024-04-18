@@ -11,6 +11,7 @@ import {
 
 import { generateUUID } from '$lib/utils/hash.util';
 import { User } from './user.model';
+import { BaseModel } from './base.model';
 
 export enum PrompotRole {
 	SYSTEM = 'system',
@@ -19,10 +20,7 @@ export enum PrompotRole {
 }
 
 @Entity()
-export class Prompt {
-	@PrimaryKey({ type: 'uuid' })
-	id = generateUUID();
-
+export class Prompt extends BaseModel {
 	@Enum()
 	role!: PrompotRole;
 
@@ -35,21 +33,15 @@ export class Prompt {
 	@ManyToOne(() => PromptThread)
 	thread?: PromptThread;
 
-	@Property()
-	timestamp?: Date & Opt = new Date();
-
 	constructor(prompt: NewIPrompt) {
+		super();
 		this.role = prompt.role;
 		this.content = prompt.content;
-		this.timestamp = prompt.timestamp;
 	}
 }
 
 @Entity()
-export class PromptThread {
-	@PrimaryKey({ type: 'uuid' })
-	id = generateUUID();
-
+export class PromptThread extends BaseModel {
 	@Property()
 	model!: string;
 
@@ -69,6 +61,7 @@ export class PromptThread {
 	prompts = new Collection<Prompt>(this);
 
 	constructor(promptThread: IPromptThread) {
+		super();
 		this.model = promptThread.model;
 		this.hash = promptThread.hash;
 		this.tokensUsed = promptThread.tokensUsed;
