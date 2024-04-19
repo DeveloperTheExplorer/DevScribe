@@ -47,7 +47,7 @@ export class Lesson extends BaseModel {
 	lessonIndex?: number;
 
 	@ManyToOne(() => Chapter)
-	chapter!: Chapter;
+	chapter!: typeof Chapter;
 
 	constructor(lesson: NewLesson) {
 		super();

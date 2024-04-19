@@ -56,7 +56,7 @@ export class Course extends BaseModel {
 	content: string;
 
 	@ManyToOne(() => User)
-	owner: User;
+	owner: typeof User;
 
 	@OneToMany(() => Chapter, (chapter) => chapter.course)
 	chapters = new Collection<Chapter>(this);

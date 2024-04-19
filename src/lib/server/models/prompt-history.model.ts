@@ -20,27 +20,6 @@ export enum PrompotRole {
 }
 
 @Entity()
-export class Prompt extends BaseModel {
-	@Enum()
-	role!: PrompotRole;
-
-	@Property()
-	content!: string;
-
-	@ManyToOne(() => User)
-	user?: User;
-
-	@ManyToOne(() => PromptThread)
-	thread?: PromptThread;
-
-	constructor(prompt: NewIPrompt) {
-		super();
-		this.role = prompt.role;
-		this.content = prompt.content;
-	}
-}
-
-@Entity()
 export class PromptThread extends BaseModel {
 	@Property()
 	model!: string;
@@ -55,7 +34,7 @@ export class PromptThread extends BaseModel {
 	approved!: number;
 
 	@ManyToOne(() => User)
-	user?: User;
+	user?: typeof User;
 
 	@OneToMany(() => Prompt, (prompt) => prompt.thread)
 	prompts = new Collection<Prompt>(this);
@@ -66,6 +45,27 @@ export class PromptThread extends BaseModel {
 		this.hash = promptThread.hash;
 		this.tokensUsed = promptThread.tokensUsed;
 		this.approved = promptThread.approved;
+	}
+}
+
+@Entity()
+export class Prompt extends BaseModel {
+	@Enum()
+	role!: PrompotRole;
+
+	@Property()
+	content!: string;
+
+	@ManyToOne(() => User)
+	user?: typeof User;
+
+	@ManyToOne(() => PromptThread)
+	thread?: PromptThread;
+
+	constructor(prompt: NewIPrompt) {
+		super();
+		this.role = prompt.role;
+		this.content = prompt.content;
 	}
 }
 

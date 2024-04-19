@@ -1,9 +1,11 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { redirect, type Handle } from '@sveltejs/kit';
 
-import { handle as authenticationHandle } from './auth';
 import { RequestContext } from '@mikro-orm/mysql';
+import 'reflect-metadata';
+
 import { orm } from '$lib/server/db';
+import { handle as authenticationHandle } from './auth';
 
 const authorizationHandle: Handle = async ({ event, resolve }) => {
 	// Protect any routes under /authenticated
